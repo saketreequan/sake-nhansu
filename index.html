@@ -1,18 +1,183 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh sách trang</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh sách vị trí tuyển dụng</title>
+  <style>
+    :root {
+      --bg: #f7f2ea;
+      --card: #fffaf4;
+      --text: #2b211c;
+      --subtext: #76665c;
+      --line: #e5d9cc;
+      --accent: #8a6748;
+      --accent-hover: #6f5239;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 56px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header p {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .header h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+    }
+
+    .header .note {
+      margin: 0 auto;
+      max-width: 560px;
+      color: var(--subtext);
+      font-size: 1rem;
+    }
+
+    .quick-note {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      color: var(--subtext);
+      font-size: 0.98rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      transition: 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #d6c3b1;
+    }
+
+    .card small {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+      line-height: 1.25;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--subtext);
+      font-size: 0.96rem;
+    }
+
+    .arrow {
+      display: inline-block;
+      margin-top: 14px;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding-top: 28px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>5 trang HTML của tôi</h1>
-  <ul>
-    <li><a href="page1.html">NV-PV Full-time</a></li>
-    <li><a href="page2.html">NV-PV Part-time</a></li>
-    <li><a href="page3.html">NV-Tiếp thực Full-time</a></li>
-    <li><a href="page4.html">NV-Tạp vụ Full-time</a></li>
-    <li><a href="page5.html">Giám sát - Quản lý</a></li>
-  </ul>
+  <main class="container">
+    <header class="header">
+      <p>Tuyển dụng</p>
+      <h1>Danh sách vị trí</h1>
+      <div class="note">Chọn vị trí phù hợp để xem nội dung chi tiết.</div>
+    </header>
+
+    <section class="quick-note">
+      Gợi ý: nếu bạn cần vị trí làm việc theo ca linh hoạt, chọn <strong>Part-time</strong>.
+      Nếu bạn muốn vị trí toàn thời gian hoặc quản lý, chọn các mục còn lại bên dưới.
+    </section>
+
+    <section class="grid">
+      <a class="card" href="page1.html">
+        <small>01</small>
+        <h2>NV-PV Full-time</h2>
+        <p>Vị trí phục vụ toàn thời gian.</p>
+        <span class="arrow">Xem chi tiết →</span>
+      </a>
+
+      <a class="card" href="page2.html">
+        <small>02</small>
+        <h2>NV-PV Part-time</h2>
+        <p>Vị trí phục vụ theo ca linh hoạt.</p>
+        <span class="arrow">Xem chi tiết →</span>
+      </a>
+
+      <a class="card" href="page3.html">
+        <small>03</small>
+        <h2>NV-Tiếp thực Full-time</h2>
+        <p>Vị trí hỗ trợ vận hành phục vụ.</p>
+        <span class="arrow">Xem chi tiết →</span>
+      </a>
+
+      <a class="card" href="page4.html">
+        <small>04</small>
+        <h2>NV-Tạp vụ Full-time</h2>
+        <p>Vị trí vệ sinh và hỗ trợ không gian.</p>
+        <span class="arrow">Xem chi tiết →</span>
+      </a>
+
+      <a class="card" href="page5.html">
+        <small>05</small>
+        <h2>Giám sát - Quản lý</h2>
+        <p>Vị trí điều phối và quản lý vận hành.</p>
+        <span class="arrow">Xem chi tiết →</span>
+      </a>
+    </section>
+  </main>
 </body>
 </html>
