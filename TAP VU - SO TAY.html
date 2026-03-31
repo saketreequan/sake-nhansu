@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Công Việc & KPI - Tạp Vụ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0fdf4; } /* Nền xanh mint nhạt */
+        .app-container { max-width: 480px; margin: 0 auto; background-color: #ffffff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.active { max-height: 1500px; transition: max-height 0.5s ease-in; }
+        .rotate-180 { transform: rotate(180deg); }
+        @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-sparkle { animation: sparkle 1.5s infinite; }
+        .loader { border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 3px solid #ffffff; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .semantic-gradient { background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #059669 100%); }
+        /* Header Gradient tông màu sạch sẽ (Teal/Cyan) */
+        .header-gradient { background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%); }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div id="app-root" class="app-container relative pb-10"></div>
+
+<script>
+    const JOB_DATA = {
+        meta: {
+            version: "TÀI LIỆU NỘI BỘ",
+            roleName: "Nhân viên Tạp vụ / Vệ sinh",
+            updateDate: "Hôm nay"
+        },
+        objective: {
+            desc: "Nhân viên Tạp vụ chịu trách nhiệm chính về vệ sinh tổng thể, an toàn khu vực vận hành, toilet khách, khu giặt rửa, rác thải và chuẩn bị suất ăn nội bộ.",
+            goal: "Duy trì nhà hàng ở trạng thái sạch sẽ, gọn gàng. Giảm rủi ro trơn trượt giờ cao điểm và giữ hình ảnh chỉn chu, sạch đẹp trong mắt khách hàng."
+        },
+        jobDescriptions: [
+            {
+                title: "1. Vệ sinh Sảnh & Lối đi",
+                items: [
+                    "<strong>Duy trì:</strong> Quét, lau sàn sạch tại sảnh, lối đi, hành lang, khu vực chung.",
+                    "<strong>Xử lý ngay:</strong> Bia, nước, đồ ăn đổ, ly chén rơi vỡ hoặc rác trên lối đi.",
+                    "<strong>An toàn:</strong> Luôn đặt biển cảnh báo khi lau sàn trơn trượt."
+                ]
+            },
+            {
+                title: "2. Vệ sinh Toilet khách",
+                items: [
+                    "<strong>Duy trì:</strong> Lau sạch lavabo, gương, bồn cầu, sàn toilet, không để mùi hôi.",
+                    "<strong>Bổ sung:</strong> Kiểm tra và châm đầy đủ giấy vệ sinh, nước rửa tay.",
+                    "<strong>Tần suất:</strong> Tăng cường kiểm tra liên tục vào giờ cao điểm, cuối tuần."
+                ]
+            },
+            {
+                title: "3. Khu giặt rửa & Khăn",
+                items: [
+                    "<strong>Quy tắc khăn:</strong> Tuyệt đối không để lẫn khăn lau bàn, khăn phục vụ và khăn lau sàn.",
+                    "<strong>Giặt rửa:</strong> Giặt, phơi, gấp gọn khăn đúng quy định. Không để đồ dơ tồn đọng lâu.",
+                    "<strong>Dụng cụ:</strong> Sắp xếp chổi, cây lau, hóa chất gọn gàng."
+                ]
+            },
+            {
+                title: "4. Rác thải & Suất ăn nhân viên",
+                items: [
+                    "<strong>Rác thải:</strong> Thu gom đúng giờ, thay túi rác kịp thời, không để tràn bốc mùi.",
+                    "<strong>Suất ăn:</strong> Đảm bảo đúng giờ, đủ số lượng, sạch sẽ, chín kỹ.",
+                    "<strong>Dọn dẹp:</strong> Dọn sạch khu vực sơ chế/nấu sau khi hoàn tất suất ăn."
+                ]
+            }
+        ],
+        workHours: {
+            shifts: [
+                { name: "Ca 1", time: "08:00 – 21:30", note: "(Nghỉ giữa ca: 13:00 – 16:00)" },
+                { name: "Ca 2", time: "11:00 – 21:30", note: "(Nghỉ ngắn tùy tình hình vận hành)" }
+            ],
+            peakHours: "02 Ngày / Tháng",
+            peakNote: "Chỉ được nghỉ theo lịch sắp xếp. Không tự ý nghỉ hoặc tự đổi ca khi chưa được duyệt."
+        },
+        salary: {
+            base: "7.000.000",
+            kpiMax: "2.500.000",
+            total: "9.500.000",
+            tipPolicy: "Nhận đủ KPI khi hoàn thành đúng công việc, đúng checklist và không vi phạm."
+        },
+        kpis: [
+            {
+                icon: "✨", title: "Vệ sinh sảnh, lối đi & điểm rơi", reward: "+ 600.000đ",
+                positives: ["Sàn sạch, xử lý nhanh đồ đổ vỡ.", "Luôn đặt biển cảnh báo khi lau sàn."],
+                negatives: ["Bỏ sót mảnh vỡ, khu vực trơn ngã kéo dài.", "Không đặt biển cảnh báo."],
+                alert: "Để sàn trơn gây té ngã ➔ <strong class='text-red-600 font-bold'>Trừ 100% mục này</strong>"
+            },
+            {
+                icon: "🚻", title: "Toilet khách & khu rửa tay", reward: "+ 450.000đ",
+                positives: ["Toilet sạch, thơm, khô ráo.", "Luôn đủ giấy và nước rửa tay."],
+                negatives: ["Hết giấy/nước rửa tay không thay.", "Toilet mùi hôi, sàn bẩn kéo dài."],
+                alert: null
+            },
+            {
+                icon: "🧽", title: "Khu giặt rửa, khăn & dụng cụ", reward: "+ 350.000đ",
+                positives: ["Phân loại khăn đúng quy chuẩn.", "Hóa chất, chổi lau gọn gàng."],
+                negatives: ["Lẫn lộn khăn lau bàn và khăn lau sàn."],
+                alert: null
+            },
+            {
+                icon: "🗑️", title: "Rác thải & Hậu cần", reward: "+ 250.000đ",
+                positives: ["Thay rác kịp thời, khu rác gọn gàng."],
+                negatives: ["Rác tràn, rỉ nước, bốc mùi ảnh hưởng khách."],
+                alert: null
+            },
+            {
+                icon: "🍱", title: "Suất ăn nhân viên", reward: "+ 250.000đ",
+                positives: ["Đúng giờ, đủ suất, ăn chín uống sôi."],
+                negatives: ["Thực phẩm ôi thiu, khu nấu bừa bộn."],
+                alert: null
+            },
+            {
+                icon: "⏰", title: "Chấm công & Kỷ luật", reward: "+ 300.000đ",
+                positives: ["Đúng giờ, chấm công đầy đủ."],
+                negatives: ["Đi trễ, về sớm, tự ý bỏ vị trí.", "Nghỉ không phép."],
+                alert: null
+            },
+            {
+                icon: "🤝", title: "Tác phong & Phối hợp", reward: "+ 300.000đ",
+                positives: ["Hỗ trợ các bộ phận khi đông khách."],
+                negatives: ["Lười biếng, tụ tập dùng điện thoại.", "Cãi vã, đùn đẩy công việc."],
+                alert: null
+            }
+        ],
+        kpiScale: [
+            { error: "0 - 1 Lỗi", percent: "100%", color: "text-green-600" },
+            { error: "2 - 3 Lỗi", percent: "90%", color: "text-slate-800" },
+            { error: "4 - 5 Lỗi", percent: "70%", color: "text-slate-800" },
+            { error: "6 - 7 Lỗi", percent: "50%", color: "text-orange-500" },
+            { error: "8 - 9 Lỗi", percent: "30%", color: "text-red-600" },
+            { error: "≥ 10 Lỗi", percent: "0%", color: "text-red-600" }
+        ],
+        rules: [
+            "1 Lỗi được ghi nhận qua checklist, camera, hình ảnh hoặc phản ánh của quản lý.",
+            "Lỗi nghiêm trọng (vd: để mảnh vỡ thủy tinh gây nguy hiểm, nghỉ không phép): Trừ thẳng 0% KPI của hạng mục đó.",
+            "Không được cộng dồn lỗi nghiêm trọng theo thang điểm thông thường."
+        ]
+    };
+
+    function renderApp() {
+        const root = document.getElementById('app-root');
+        let htmlContent = `
+            <header class="header-gradient text-white p-6 pt-10 pb-8 rounded-b-[40px] shadow-xl relative z-20">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-white/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">${JOB_DATA.meta.version}</span>
+                    <i class="fa-solid fa-broom text-xl opacity-90 animate-pulse"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold tracking-tight mb-2">Cẩm Nang Công Việc</h1>
+                <p class="text-white/90 text-sm font-medium flex items-center">
+                    <i class="fa-solid fa-hands-bubbles mr-2"></i> Vị trí: ${JOB_DATA.meta.roleName}
+                </p>
+            </header>
+
+            <main class="px-5 -mt-6 relative z-30 space-y-6 pb-20">
+                <section class="bg-white border-2 border-cyan-500 rounded-3xl p-6 shadow-md relative overflow-hidden text-center">
+                    <div class="absolute -right-6 -bottom-6 opacity-5 text-8xl text-cyan-600 rotate-12"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <div class="relative z-10 text-center">
+                        <p class="text-slate-500 font-bold mb-1 text-xs uppercase tracking-widest">Tổng thu nhập tối đa</p>
+                        <h2 class="text-5xl font-black text-cyan-600 mb-6 tracking-tight">${JOB_DATA.salary.total}<span class="text-xl ml-1">đ</span></h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100"><p class="text-[10px] text-slate-400 font-bold uppercase">Lương cơ bản</p><p class="font-extrabold text-slate-700">${JOB_DATA.salary.base}đ</p></div>
+                            <div class="bg-cyan-50 p-3 rounded-2xl border border-cyan-100"><p class="text-[10px] text-cyan-500 font-bold uppercase">Thưởng KPI</p><p class="font-extrabold text-cyan-600">+${JOB_DATA.salary.kpiMax}đ</p></div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-4 italic underline decoration-dotted font-medium italic">${JOB_DATA.salary.tipPolicy}</p>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-clock text-cyan-500 mr-2"></i> I. Thời gian làm việc</h3>
+                    <div class="space-y-4">
+                        ${JOB_DATA.workHours.shifts.map(shift => `<div class="flex justify-between items-start border-b border-slate-50 pb-2 last:border-0"><div class="text-sm font-bold text-slate-700">${shift.name}</div><div class="text-right"><p class="text-sm text-slate-600 font-bold">${shift.time}</p><p class="text-[10px] text-slate-400 font-medium">${shift.note}</p></div></div>`).join('')}
+                        <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 mt-2 text-center sm:text-left"><p class="text-[11px] text-orange-600 font-black uppercase mb-1"><i class="fa-solid fa-calendar-day mr-1"></i> Ngày nghỉ tiêu chuẩn:</p><p class="text-xs text-orange-700 font-medium">${JOB_DATA.workHours.peakHours}</p><p class="text-[10px] text-orange-500 mt-1">${JOB_DATA.workHours.peakNote}</p></div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-bullseye text-red-500 mr-2"></i> II. Mục tiêu vị trí</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed text-justify mb-3">${JOB_DATA.objective.desc}</p>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-semibold text-slate-700"><i class="fa-solid fa-check-circle text-cyan-500 mr-1"></i> ${JOB_DATA.objective.goal}</div>
+                </section>
+
+                <section>
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-list-check text-blue-500 mr-2"></i> III. Mô tả công việc chi tiết</h3>
+                    <div class="space-y-3">
+                        ${JOB_DATA.jobDescriptions.map((jd, idx) => `<div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm"><button onclick="toggleAccordion('jd-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50 transition-all"><div class="font-bold text-slate-700 text-sm">${jd.title}</div><i class="fa-solid fa-chevron-down text-slate-300 transition-transform duration-300"></i></button><div id="jd-${idx}" class="accordion-content bg-slate-50 border-t border-slate-100"><div class="p-4 text-sm text-slate-600 space-y-3">${jd.items.map(item => `<div class="flex items-start"><i class="fa-solid fa-caret-right text-cyan-400 mt-1 mr-2"></i><span>${item}</span></div>`).join('')}</div></div></div>`).join('')}
+                    </div>
+                </section>
+
+                <section class="space-y-4">
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> IV. Trạng thái vận hành</h3>
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"><p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái Toilet Khách</p><div class="flex justify-between text-[10px] font-bold mb-1"><span class="text-red-500">Mùi hôi / Hết giấy</span><span class="text-green-600">Sạch sẽ / Thơm</span></div><div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2"><div class="h-full semantic-gradient w-[95%]"></div></div><p class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1"></i> Kiểm tra liên tục 15-30p/lần giờ cao điểm.</p></div>
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"><p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái Sàn Nhà</p><div class="flex justify-between text-[10px] font-bold mb-1"><span class="text-red-500">Đổ vỡ / Trơn trượt</span><span class="text-green-600">Khô ráo / An toàn</span></div><div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2"><div class="h-full semantic-gradient w-[85%]"></div></div><p class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1"></i> Luôn cắm biển báo màu vàng khi lau ướt.</p></div>
+                </section>
+
+                <section>
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-chart-line text-cyan-500 mr-2"></i> V. Chỉ tiêu KPI chi tiết</h3>
+                    <div class="space-y-3 mb-6">
+                        ${JOB_DATA.kpis.map((kpi, idx) => `<div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm"><button onclick="toggleAccordion('kpi-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50 transition-all"><div class="flex items-center"><span class="text-xl mr-3">${kpi.icon}</span><div class="text-left"><div class="font-bold text-slate-700 text-sm">${kpi.title}</div><div class="text-cyan-600 font-black text-xs">${kpi.reward}</div></div></div><i class="fa-solid fa-chevron-down text-slate-300 transition-transform duration-300"></i></button><div id="kpi-${idx}" class="accordion-content bg-slate-50 border-t border-slate-100"><div class="p-4 text-sm text-slate-600 space-y-2">${kpi.positives.map(p => `<div class="flex items-start"><i class="fa-solid fa-check text-green-500 mr-2 mt-1"></i><span>${p}</span></div>`).join('')}${kpi.negatives.length > 0 ? `<div class="text-[10px] font-black text-red-500 uppercase mt-2 mb-1">Các lỗi vi phạm:</div>${kpi.negatives.map(n => `<div class="flex items-start text-xs text-red-600 mb-1"><i class="fa-solid fa-xmark mr-2 mt-1"></i><span>${n}</span></div>`).join('')}` : ''}${kpi.alert ? `<div class="bg-red-100 text-red-700 p-2 rounded-xl text-[10px] mt-2 border border-red-200">${kpi.alert}</div>` : ''}</div></div></div>`).join('')}
+                    </div>
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6 mt-4">
+                        <h4 class="font-extrabold text-[#2c3e50] text-lg mb-1 tracking-tight">Thang Điểm Lỗi Thông Thường</h4>
+                        <p class="text-[11px] text-cyan-700 italic mb-4 leading-relaxed font-medium">Áp dụng độc lập và đồng nhất cho tất cả các mục KPI (bao gồm cả Chấm công).</p>
+                        <div class="border border-slate-100 rounded-2xl overflow-hidden">
+                            <table class="w-full text-center text-sm">
+                                <thead class="bg-slate-50/80"><tr class="text-slate-500 font-bold border-b border-slate-100"><th class="py-3 border-r border-slate-100 uppercase text-[10px]">Số lỗi</th><th class="uppercase text-[10px]">Mức nhận</th></tr></thead>
+                                <tbody>${JOB_DATA.kpiScale.map(scale => `<tr><td class="py-3 font-medium text-slate-600 border-r border-slate-100 border-b border-slate-50">${scale.error}</td><td class="py-3 font-black ${scale.color} border-b border-slate-50">${scale.percent}</td></tr>`).join('')}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-scale-balanced text-red-600 mr-2"></i> VI. Nguyên tắc xử lý lỗi nghiêm trọng</h3>
+                    <div class="space-y-3">
+                        ${JOB_DATA.rules.map(rule => `<div class="flex items-start text-sm text-slate-600"><i class="fa-solid fa-circle text-[6px] text-slate-300 mt-2 mr-3 shrink-0"></i><p>${rule}</p></div>`).join('')}
+                    </div>
+                </section>
+
+                <!-- AI SAKE Assistant -->
+                <section class="bg-gradient-to-br from-cyan-600 to-blue-700 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-20 text-7xl"><i class="fa-solid fa-robot"></i></div>
+                    <div class="relative z-10">
+                        <h3 class="font-black mb-1 flex items-center uppercase text-sm tracking-wide">Trợ Lý AI Sake <span class="ml-2 text-xs animate-sparkle">✨</span></h3>
+                        <p class="text-[10px] text-cyan-100 mb-4 font-bold tracking-widest uppercase tracking-widest">Hệ thống hỗ trợ Tạp Vụ nội bộ</p>
+                        <div class="space-y-3">
+                            <select id="ai-task" onchange="document.getElementById('ai-input').value = this.value" class="w-full text-xs font-bold bg-white/10 border border-white/20 text-white rounded-xl p-3 outline-none focus:bg-white focus:text-blue-900 transition-all shadow-inner">
+                                <option value="" class="text-blue-900 font-bold">--- Gợi ý câu hỏi nhanh ---</option>
+                                <option value="Nếu tôi đi trễ 5 lần thì lương tính thế nào?" class="text-blue-900 font-bold">📖 Hỏi về Đi trễ / Chấm công</option>
+                                <option value="Khăn lau bàn và lau sàn để chung được không?" class="text-blue-900 font-bold">🧽 Hỏi về quy tắc phân loại khăn</option>
+                                <option value="Sàn trơn ngã thì bị trừ KPI như nào?" class="text-blue-900 font-bold">⚠️ Lỗi nghiêm trọng sàn trơn</option>
+                            </select>
+                            <textarea id="ai-input" rows="2" class="w-full text-xs bg-white/10 border border-white/20 text-white rounded-xl p-3 outline-none placeholder-cyan-200 focus:bg-white focus:text-blue-900 transition-all shadow-inner" placeholder="Nhập câu hỏi của bạn (ví dụ: Tổng lương bao nhiêu?)"></textarea>
+                            <button onclick="askLocalAI()" class="w-full bg-white text-blue-700 font-black py-3 rounded-xl shadow-lg flex justify-center items-center transition-all active:scale-95">
+                                <span id="ai-btn-text">Gửi Câu Hỏi</span>
+                                <span id="ai-loading" class="loader hidden ml-2 !border-t-blue-600 !border-blue-100"></span>
+                            </button>
+                            <div id="ai-response-box" class="hidden mt-4 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm shadow-inner overflow-y-auto max-h-60">
+                                <p class="text-[9px] font-black uppercase mb-1 flex items-center"><i class="fa-solid fa-comment-dots mr-1"></i> Trợ lý Sake trả lời:</p>
+                                <div id="ai-result-text" class="text-[11px] leading-relaxed italic text-white font-medium"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="pt-8 pb-4 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-60">
+                    <p>Phê duyệt bởi Ban Quản lý Cây Sake</p>
+                </footer>
+            </main>
+        `;
+        root.innerHTML = htmlContent;
+    }
+
+    function toggleAccordion(id, btn) {
+        const content = document.getElementById(id);
+        const icon = btn.querySelector('.fa-chevron-down');
+        content.classList.toggle('active');
+        icon.classList.toggle('rotate-180');
+    }
+
+    function askLocalAI() {
+        const inputField = document.getElementById('ai-input');
+        const btnText = document.getElementById('ai-btn-text');
+        const loading = document.getElementById('ai-loading');
+        const responseBox = document.getElementById('ai-response-box');
+        const responseText = document.getElementById('ai-result-text');
+
+        const query = inputField.value.trim().toLowerCase();
+        if (!query) return;
+
+        btnText.textContent = "Đang tra cứu...";
+        loading.classList.remove('hidden');
+        responseBox.classList.add('hidden');
+
+        setTimeout(() => {
+            let foundAnswer = "";
+            const LOCAL_AI_DATA = [
+                {
+                    keywords: ["trễ", "muộn", "về sớm", "giờ", "chấm công"],
+                    answer: "Nếu đi trễ dưới 10 phút không báo trước hoặc quên chấm công sẽ bị tính 1 lỗi. Thang trừ KPI chấm công áp dụng như các mục khác: 0-1 lỗi = 100%, 2-3 lỗi = 90%, 4-5 lỗi = 70%, 6-7 lỗi = 50%, 8-9 lỗi = 30%, >=10 lỗi là mất toàn bộ 300.000đ."
+                },
+                {
+                    keywords: ["nghỉ", "phép", "đột xuất", "không phép"],
+                    answer: "Nếu em nghỉ không phép, tự ý bỏ vị trí lâu hoặc nhờ người chấm công hộ thì sẽ bị quy vào <b>Lỗi Nghiêm Trọng</b>, mất ngay 100% KPI (300.000đ) của mục Chấm công & Kỷ luật, và bị phạt theo nội quy."
+                },
+                {
+                    keywords: ["trơn", "ngã", "té", "biển báo", "mảnh vỡ"],
+                    answer: "Luôn phải đặt biển cảnh báo khi lau sàn. Nếu để khu vực trơn kéo dài dễ gây té ngã, hoặc bỏ quên mảnh vỡ thủy tinh gây nguy hiểm, em sẽ bị phạt <b>Lỗi Nghiêm Trọng</b>: Trừ 0% KPI Vệ sinh sảnh (mất 600.000đ)."
+                },
+                {
+                    keywords: ["khăn", "lau bàn", "lau sàn", "để chung"],
+                    answer: "Tuyệt đối không! Việc dùng sai khăn (để lẫn khăn lau sàn với khăn lau bàn) làm ảnh hưởng đến tiêu chuẩn vệ sinh là <b>Lỗi Nghiêm Trọng</b>, trừ ngay 100% mục KPI Khu giặt rửa (mất 350.000đ)."
+                },
+                {
+                    keywords: ["lương", "tổng", "thu nhập", "bao nhiêu"],
+                    answer: "Tổng thu nhập tối đa của vị trí Tạp vụ là <b>9.500.000đ</b>. Trong đó: Lương cơ bản là 7.000.000đ và tổng thưởng KPI tối đa là 2.500.000đ."
+                },
+                {
+                    keywords: ["toilet", "hôi", "hết giấy", "nước rửa tay"],
+                    answer: "Toilet phải được kiểm tra thường xuyên. Nếu để toilet quá bẩn giờ đông khách, hoặc để bị tắc/tràn/mùi nặng mà không báo cáo, khách phàn nàn nhiều lần thì sẽ bị phạt <b>Lỗi Nghiêm Trọng</b> (mất 450.000đ)."
+                },
+                {
+                    keywords: ["rác", "đổ rác", "mùi", "rỉ nước"],
+                    answer: "Phải thay túi rác kịp thời. Nếu để rác tồn đọng nghiêm trọng, rỉ nước hoặc mùi hôi lan ra khu khách hàng là lỗi nghiêm trọng, mất ngay 250.000đ KPI Rác thải."
+                },
+                {
+                    keywords: ["suất ăn", "cơm", "nấu", "nhân viên"],
+                    answer: "Suất ăn phải đảm bảo đủ lượng, đúng giờ và an toàn. Việc để thực phẩm có dấu hiệu hư hỏng, ôi thiu làm ảnh hưởng sức khỏe nhân viên là lỗi nghiêm trọng, trừ thẳng 100% KPI mục Suất ăn (250.000đ)."
+                },
+                {
+                    keywords: ["kpi", "tính sao", "thang điểm"],
+                    answer: "KPI trừ theo lỗi độc lập cho từng hạng mục. Lỗi thường bị trừ theo bậc: 0-1 lỗi (100%), 2-3 lỗi (90%), 4-5 lỗi (70%), 6-7 lỗi (50%). Lỗi nghiêm trọng trừ 100% KPI hạng mục đó."
+                }
+            ];
+            
+            for (const item of LOCAL_AI_DATA) {
+                if (item.keywords.some(k => query.includes(k))) {
+                    foundAnswer = item.answer;
+                    break;
+                }
+            }
+
+            if (!foundAnswer) {
+                foundAnswer = "Trợ lý Sake chưa tìm thấy đáp án chính xác. Bạn hãy thử dùng từ khóa như: 'lương bao nhiêu', 'đi trễ', 'sàn trơn', 'dùng sai khăn'... Hoặc kiểm tra trực tiếp ở các mục KPI phía trên nhé!";
+            }
+
+            responseText.innerHTML = foundAnswer;
+            responseBox.classList.remove('hidden');
+            btnText.textContent = "Gửi Câu Hỏi";
+            loading.classList.add('hidden');
+        }, 600);
+    }
+
+    window.onload = renderApp;
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cẩm Nang Công Việc & KPI - Part-time</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .app-container { max-width: 480px; margin: 0 auto; background-color: #ffffff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.active { max-height: 800px; transition: max-height 0.3s ease-in; }
+        .rotate-180 { transform: rotate(180deg); }
+        
+        /* Hiệu ứng cho AI */
+        @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-sparkle { animation: sparkle 1.5s infinite; }
+        /* Loader màu tím cho nút AI màu trắng */
+        .loader { border: 3px solid rgba(107, 97, 245, 0.2); border-radius: 50%; border-top: 3px solid #6B61F5; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Container gốc để Javascript tự động "vẽ" ứng dụng vào đây -->
+    <div id="app-root" class="app-container relative pb-10"></div>
+
+<script>
+    /* ======================================================================
+       KHU VỰC CẤU HÌNH DỮ LIỆU (JOB DATA) - DÀNH CHO PART-TIME
+       ====================================================================== */
+    const JOB_DATA = {
+        meta: {
+            version: "Tài liệu nội bộ",
+            roleName: "Nhân viên Phục vụ (Part-time)",
+            updateDate: new Date().toLocaleDateString('vi-VN')
+        },
+        salary: {
+            base: "2.100.000",
+            kpiMax: "850.000",
+            total: "2.950.000",
+            tipPolicy: "Tip nhân viên tự nhận theo quy định hiện hành và trích một phần cho bộ phận tiếp thực."
+        },
+        workHours: {
+            shifts: [
+                { name: "Ca Cố định", time: "17:00 – 22:00", note: "(Làm thông ca, không nghỉ)" }
+            ],
+            peakHours: "18:00–22:00",
+            peakNote: "Nhân viên phải bám khu vực phân công, hạn chế rời vị trí khi chưa được phép."
+        },
+        objective: {
+            desc: "Nhân viên Phục vụ trực tiếp tiếp xúc khách tại sảnh/bàn, chịu trách nhiệm đón tiếp, nhận order, phục vụ món ăn – đồ uống – bia, chăm sóc khách và duy trì tiêu chuẩn vận hành.",
+            goal: "Phục vụ đúng bàn, đúng order, đúng thời điểm; giữ khu vực sạch sẽ; chủ động hỗ trợ khách và góp phần <strong class='text-green-600'>gia tăng doanh thu bia</strong>."
+        },
+        jobDescriptions: [
+            {
+                title: "1. Phục vụ khách",
+                items: [
+                    "<strong>Đón tiếp:</strong> Đón khách, xác nhận số lượng và hướng dẫn vào bàn phù hợp.",
+                    "<strong>Order:</strong> Giới thiệu menu, ghi nhận order đầy đủ, chính xác và chuyển cho bếp/bar.",
+                    "<strong>Phục vụ món:</strong> Đúng bàn, đúng khách, đúng thứ tự; kiểm tra nhanh trước khi lên bàn.",
+                    "<strong>Bia tại bàn:</strong> Chuẩn bị ly, xô đá; thực hiện khui/rót và refill bia theo nhu cầu.",
+                    "<strong>Chăm sóc & Upsell:</strong> Quan sát, hỗ trợ dọn dẹp bàn, follow-up và gợi ý khách gọi thêm món/bia khi có cơ hội."
+                ]
+            },
+            {
+                title: "2. Chuẩn bị và giữ vệ sinh",
+                items: [
+                    "<strong>Dọn dẹp:</strong> Dọn bàn ngay khi khách về; lau sạch, xếp ghế, reset bàn nhanh.",
+                    "<strong>CCDC:</strong> Chuẩn bị đủ chén, đũa, ly, xô đá... tại quầy TAB/khu vực phục vụ.",
+                    "<strong>Sẵn sàng:</strong> Đảm bảo khu vực phân công luôn đủ đồ dùng trước giờ cao điểm.",
+                    "<strong>Vệ sinh:</strong> Giữ khu vực khô ráo, gọn gàng; không để rác, chai rỗng, nước đọng."
+                ]
+            },
+            {
+                title: "3. Phối hợp vận hành",
+                items: [
+                    "<strong>Runner (Tiếp thực):</strong> Phối hợp nhận món, nhận bia. Phục vụ chịu trách nhiệm lên bàn, Runner lo hàng tại kho/tủ bia.",
+                    "<strong>Tạp vụ:</strong> Phối hợp khi cần vệ sinh, thu gom nhanh hoặc bổ sung dụng cụ gấp.",
+                    "<strong>Giám sát:</strong> Báo cáo ngay khi phát hiện order sai, thiếu đồ, khách phàn nàn. Tuân thủ phân công điều phối."
+                ]
+            }
+        ],
+        kpis: [
+            {
+                icon: "⏰", title: "KPI Chuyên cần", reward: "+ 150.000đ",
+                positives: ["Đi làm đúng giờ, chấm công đủ.", "Không nghỉ đột xuất quá 2 ngày/tháng."],
+                negatives: [],
+                alert: "Nghỉ quá 2 ngày (dù có phép) HOẶC nghỉ 1 ngày không phép ➔ <strong class='text-red-600'>Trừ 100% khoản này</strong>."
+            },
+            {
+                icon: "👔", title: "KPI Kỷ luật & Chấm công", reward: "+ 100.000đ",
+                positives: [],
+                negatives: [
+                    "Đi trễ/về sớm quá 15 phút.", "Quên chấm công đầu/cuối ca.", "Tự ý rời vị trí khi chưa được sự đồng ý.",
+                    "Đổi ca, nhờ làm thay, nghỉ ca sai quy định.", "Không có mặt giờ cao điểm (18h-22h).",
+                    "Không dự briefing / không nhận bàn giao ca.", "Không chấp hành phân công của quản lý.", "Vi phạm đồng phục, vệ sinh cá nhân, bảng tên."
+                ],
+                alert: null
+            },
+            {
+                icon: "🍽️", title: "Chất lượng phục vụ", reward: "+ 150.000đ",
+                positives: [
+                    "Nhận/chuyển order đầy đủ, không sai/thiếu do chủ quan.",
+                    "Phục vụ đúng bàn, đúng khách, đúng thứ tự.",
+                    "Chủ động follow-up sau khi lên món."
+                ],
+                negatives: ["Có phàn nàn: Tiếp nhận lịch sự, báo xử lý ngay. <strong class='text-red-600'>Không tranh cãi, bỏ mặc, tự ý vượt thẩm quyền.</strong>"],
+                alert: null
+            },
+            {
+                icon: "🧹", title: "Vệ sinh & CCDC", reward: "+ 150.000đ",
+                positives: [
+                    "<strong>Bàn ghế:</strong> Dọn ngay khi khách về; bàn sạch, set-up đồ mới sẵn sàng.",
+                    "<strong>CCDC:</strong> Luôn đủ chén, đũa, ly, khay, xô đá tại trạm trước giờ cao điểm.",
+                    "<strong>Sàn nhà:</strong> Sạch, khô, không rác/thức ăn rơi vãi.",
+                    "<strong>Quầy TAB:</strong> Gọn gàng, ngăn nắp, không ố bẩn, rỉ sét, có mùi."
+                ],
+                negatives: [],
+                alert: null
+            },
+            {
+                icon: "🤝", title: "Tác phong làm việc", reward: "+ 150.000đ",
+                positives: [
+                    "Luôn quan sát khu vực bàn, không để bàn bị bỏ quên.",
+                    "Thái độ phục vụ luôn niềm nở, lịch sự, phối hợp tốt."
+                ],
+                negatives: [
+                    "Không tụ tập buôn chuyện, làm việc riêng.",
+                    "Không sử dụng điện thoại trong ca (trừ phân công)."
+                ],
+                alert: null
+            }
+        ],
+        kpiScale: [
+            { error: "0 - 1 Lỗi", percent: "100%", isPositive: true },
+            { error: "2 - 3 Lỗi", percent: "90%", isPositive: false },
+            { error: "4 - 5 Lỗi", percent: "70%", isPositive: false },
+            { error: "6 - 7 Lỗi", percent: "50%", isPositive: false, isWarning: true },
+            { error: "8 - 9 Lỗi", percent: "30%", isPositive: false, isDanger: true },
+            { error: "≥ 10 Lỗi", percent: "0%", isPositive: false, isDanger: true }
+        ],
+        challenge: {
+            hasChallenge: true,
+            title: "Thử Thách Upsell Bia",
+            icon: "fa-beer-mug-empty",
+            reward: "150.000đ",
+            desc: "nếu tỷ lệ Doanh thu bia / Tổng doanh thu đạt chỉ tiêu.",
+            milestones: [
+                { label: "< 28%", isRed: true }, { label: "28%" }, { label: "30%" }, { label: "33%" }, { label: "≥ 35%", isGreen: true }
+            ],
+            rewards: [
+                { label: "0đ", isRed: true }, { label: "50%" }, { label: "70%" }, { label: "90%" }, { label: "100% (150k)", isGreen: true }
+            ]
+        },
+        rules: [
+            "Lỗi/vi phạm phải được ghi nhận <strong>đúng với thực tế</strong> phát sinh trong ca làm việc.",
+            "<strong>Căn cứ:</strong> Sổ bàn giao ca, checklist kiểm tra hàng ngày, audit nội bộ, camera hoặc kiểm tra đột xuất.",
+            "Một hành vi chỉ được tính vào <strong>01 hạng mục KPI chính</strong>; nếu có 02 vi phạm độc lập thì ghi nhận riêng từng lỗi.",
+            "Quản lý/Giám sát có quyền ghi nhận lỗi, thông báo trực tiếp cho nhân viên và tổng hợp kết quả cuối tháng."
+        ],
+        seniority: {
+            reward: "+100.000 VNĐ/lần",
+            max: "Tối đa 5 lần",
+            conditions: [
+                "Làm việc đủ 12 tháng liên tục.",
+                "Đạt 100% KPI 06 tháng liên tục & đánh giá tốt."
+            ]
+        },
+        aiConfig: {
+            // Chuỗi dữ liệu tóm tắt được nạp thẳng vào bộ nhớ Gemini
+            policyContext: `
+                THÔNG TIN VỀ CHÍNH SÁCH LƯƠNG & KPI CỦA NHÀ HÀNG (VỊ TRÍ PART-TIME):
+                1. Lương cơ bản 2.100.000đ. KPI tối đa 850.000đ. Tổng tối đa 2.950.000đ. Tip tự nhận và trích cho tiếp thực.
+                2. Làm việc ca cố định (17h00-22h00, không nghỉ giữa ca). Bắt buộc có mặt giờ cao điểm (18h-22h).
+                3. Quy định KPI:
+                - Chuyên cần (150k): Nghỉ quá 2 ngày hoặc 1 ngày không phép -> Trừ 100%.
+                - Kỷ luật (100k): Đi trễ 15p, quên chấm công, rời vị trí không xin phép, sai đồng phục.
+                - Phục vụ (150k): Sai order, cãi khách, bỏ mặc khách.
+                - Vệ sinh (150k): Bàn ghế/CCDC dơ, thiếu dụng cụ.
+                - Tác phong (150k): Buôn chuyện, xài điện thoại.
+                - Upsell Bia (150k): >=35% (nhận 100%), dưới 28% (nhận 0đ).
+                4. Thang điểm trừ KPI (ÁP DỤNG RIÊNG CHO TỪNG MỤC, KHÔNG CỘNG DỒN): 0-1 lỗi (nhận 100%), 2-3 lỗi (nhận 90%), 4-5 lỗi (nhận 70%), 6-7 lỗi (nhận 50%), 8-9 lỗi (nhận 30%), từ 10 lỗi trở lên (nhận 0%). Ví dụ: 4 lỗi Kỷ luật thì phần KPI Kỷ luật nhận 70%, 2 lỗi Vệ sinh thì phần KPI Vệ sinh nhận 90%.
+                5. Tăng lương: +100k/lần (tối đa 5 lần) nếu làm đủ 12 tháng hoặc đạt 100% KPI 6 tháng liên tục.
+            `,
+            taskOptions: [
+                { id: "policy", label: "📖 Hỏi đáp về Nội quy, Lương & KPI", placeholder: "Ví dụ: Em lỡ đi làm trễ 20 phút thì bị trừ bao nhiêu tiền?" },
+                { id: "upsell", label: "🍻 Xin gợi ý kịch bản Upsell (Mời gọi thêm đồ)", placeholder: "Ví dụ: Khách gọi món nướng, xin cách mời bia..." },
+                { id: "complaint", label: "🎭 Cách xử lý khi khách phàn nàn, cáu gắt", placeholder: "Ví dụ: Khách cáu vì đợi món hơn 30 phút..." }
+            ]
+        }
+    };
+
+    /* ======================================================================
+       HỆ THỐNG RENDER (KHÔNG CẦN CHỈNH SỬA PHẦN DƯỚI NÀY)
+       ====================================================================== */
+    
+    function renderApp() {
+        const root = document.getElementById('app-root');
+        
+        let html = `
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 pb-20 rounded-b-[40px] shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <div><span class="bg-white/20 text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wider">${JOB_DATA.meta.version}</span></div>
+                    <i class="fa-solid fa-bell text-xl animate-pulse"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold mb-1 mt-2 tracking-tight">Cẩm Nang Công Việc</h1>
+                <p class="text-white text-sm font-medium"><i class="fa-solid fa-user-tie mr-1"></i> Vị trí: ${JOB_DATA.meta.roleName}</p>
+            </header>
+
+            <main class="px-5 -mt-16 relative z-10 space-y-6">
+                
+                <!-- Focus Card: Tổng Thu Nhập (Ngay dưới Header) -->
+                <div class="bg-white rounded-[32px] shadow-lg p-6 border-2 border-green-500 mb-6 relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 opacity-[0.03] text-9xl text-green-600 z-0"><i class="fa-solid fa-coins"></i></div>
+                    
+                    <div class="relative z-10">
+                        <p class="text-center text-slate-500 font-bold mb-1 text-[11px] tracking-widest uppercase">Tổng thu nhập tối đa</p>
+                        <h2 class="text-center text-[42px] leading-tight font-extrabold text-green-600 mb-6">${JOB_DATA.salary.total}<span class="text-2xl font-bold ml-1">đ</span></h2>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-start justify-center">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lương cơ bản</span>
+                                <span class="text-lg font-extrabold text-slate-800">${JOB_DATA.salary.base}đ</span>
+                            </div>
+                            
+                            <div class="bg-green-50/50 p-4 rounded-2xl border border-green-100 flex flex-col items-start justify-center">
+                                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">Thưởng KPI</span>
+                                <span class="text-lg font-extrabold text-green-600">+${JOB_DATA.salary.kpiMax}đ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center border-t border-slate-100 pt-4">
+                            <p class="text-[11px] text-slate-400 font-medium italic underline decoration-slate-300 underline-offset-4 decoration-dotted">${JOB_DATA.salary.tipPolicy}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- I. Thời Gian Làm Việc -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-regular fa-clock text-blue-500 mr-2"></i> I. Thời Gian Làm Việc</h3>
+                    <ul class="text-sm text-slate-600 space-y-2">
+                        ${JOB_DATA.workHours.shifts.map(shift => `
+                            <li><span class="font-semibold text-slate-700">${shift.name}:</span> ${shift.time} <br><span class="text-xs italic text-slate-500">${shift.note}</span></li>
+                        `).join('')}
+                    </ul>
+                    <div class="mt-3 bg-red-50 border border-red-200 p-3 rounded-lg text-xs text-slate-800">
+                        <strong class="text-red-600">Khung giờ cao điểm (Bắt buộc có mặt):</strong> ${JOB_DATA.workHours.peakHours}. <br>${JOB_DATA.workHours.peakNote}
+                    </div>
+                </div>
+
+                <!-- II. Mục Tiêu -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+                    <h3 class="font-bold text-lg mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-crosshairs text-blue-500 mr-2"></i> II. Mục Tiêu Vị Trí</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed text-justify">
+                        ${JOB_DATA.objective.desc}<br><br>
+                        <strong>Mục tiêu:</strong> ${JOB_DATA.objective.goal}
+                    </p>
+                </div>
+
+                <!-- III. Mô Tả Công Việc -->
+                <div>
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> III. Mô Tả Công Việc Chi Tiết</h3>
+                    <div class="space-y-3 accordion-group">
+                        ${JOB_DATA.jobDescriptions.map(jd => `
+                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50">
+                                    <div class="font-bold text-slate-700 text-sm text-left">${jd.title}</div>
+                                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content bg-slate-50 border-t border-slate-100">
+                                    <div class="p-4 text-sm text-slate-600 space-y-3">
+                                        ${jd.items.map(item => `<p>👉 ${item}</p>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- IV. Lương & KPI -->
+                <div>
+                    <h3 class="font-bold text-lg mb-3 flex items-center text-slate-800"><i class="fa-solid fa-bullseye text-red-500 mr-2"></i> IV. Bảng Tiêu Chí KPI</h3>
+                    <p class="text-xs text-slate-500 mb-4 italic">Bấm vào từng mục để xem chi tiết.</p>
+
+                    <div class="space-y-3 mb-6 accordion-group">
+                        ${JOB_DATA.kpis.map(kpi => `
+                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50">
+                                    <div class="flex items-center"><span class="text-xl mr-3">${kpi.icon}</span><div class="text-left"><div class="font-bold text-slate-700 text-sm">${kpi.title}</div><div class="text-green-600 font-semibold text-xs">${kpi.reward}</div></div></div>
+                                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                                </button>
+                                <div class="accordion-content bg-slate-50 border-t border-slate-100">
+                                    <div class="p-4 text-sm text-slate-600 space-y-2">
+                                        ${kpi.positives.map(p => `<p><i class="fa-solid fa-check text-green-500 mr-1"></i> ${p}</p>`).join('')}
+                                        ${kpi.negatives.length > 0 ? `<p class="font-semibold mt-2 mb-1 text-red-600 text-xs uppercase">Các lỗi vi phạm (Tiêu cực):</p><ul class="list-disc pl-4 space-y-1 text-xs">${kpi.negatives.map(n => `<li>${n}</li>`).join('')}</ul>` : ''}
+                                        ${kpi.alert ? `<div class="bg-red-50 text-red-600 p-2 rounded text-xs mt-2 border border-red-200">${kpi.alert}</div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Thang điểm trừ KPI chung -->
+                    <div class="mb-8">
+                        <h4 class="font-bold text-sm text-slate-700 mb-1">Thang Điểm Trừ (Áp dụng ĐỘC LẬP cho từng mục)</h4>
+                        <p class="text-xs text-slate-500 mb-3 leading-relaxed">Lỗi của mục nào tính riêng mục đó, không cộng dồn. <br><em class="text-indigo-600">Ví dụ: Tháng này bạn vi phạm 4 lỗi Kỷ luật (nhận 70% thưởng), nhưng chỉ vi phạm 2 lỗi Phục vụ (nhận 90% thưởng).</em></p>
+                        <div class="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                            <table class="w-full text-xs text-center bg-white">
+                                <thead class="bg-slate-100 text-slate-700"><tr><th class="py-2 px-1 border-b border-r border-slate-200">Số lỗi phát hiện</th><th class="py-2 px-1 border-b border-slate-200">Mức nhận KPI</th></tr></thead>
+                                <tbody class="text-slate-600">
+                                    ${JOB_DATA.kpiScale.map(scale => `
+                                        <tr>
+                                            <td class="py-1.5 border-r border-b border-slate-100 ${scale.isDanger ? 'text-red-600 font-medium' : ''}">${scale.error}</td>
+                                            <td class="py-1.5 border-b border-slate-100 font-bold ${scale.isPositive ? 'text-green-600' : (scale.isWarning ? 'text-orange-500' : (scale.isDanger ? 'text-red-600' : 'text-slate-700'))}">${scale.percent}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Thử Thách Upsell (Ẩn nếu hasChallenge = false) -->
+                    ${JOB_DATA.challenge.hasChallenge ? `
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 shadow-sm mb-6 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10 text-6xl text-slate-400"><i class="fa-solid ${JOB_DATA.challenge.icon}"></i></div>
+                        <h3 class="font-bold text-lg mb-1 flex items-center text-slate-800 relative z-10"><i class="fa-solid ${JOB_DATA.challenge.icon} text-yellow-500 mr-2"></i> ${JOB_DATA.challenge.title}</h3>
+                        <p class="text-xs text-slate-600 mb-4 relative z-10">Nhận tối đa <strong class="text-green-600">${JOB_DATA.challenge.reward}</strong> ${JOB_DATA.challenge.desc}</p>
+                        <div class="relative pt-1 pb-4 z-10">
+                            <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1 px-1">
+                                ${JOB_DATA.challenge.milestones.map(m => `<span class="${m.isRed ? 'text-red-500' : (m.isGreen ? 'text-green-600' : '')}">${m.label}</span>`).join('')}
+                            </div>
+                            <div class="overflow-hidden h-3 mb-2 text-xs flex rounded-full bg-slate-200 border border-slate-200">
+                                <div style="width: 100%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-red-500 via-yellow-400 to-green-500"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-bold text-slate-600 px-1">
+                                ${JOB_DATA.challenge.rewards.map(r => `<span class="${r.isRed ? 'text-red-500' : (r.isGreen ? 'text-green-600 font-bold' : '')}">${r.label}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- V. Nguyên Tắc -->
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-solid fa-scale-balanced text-red-500 mr-2"></i> V. Nguyên Tắc Ghi Nhận Lỗi</h3>
+                    <ul class="text-sm text-slate-600 space-y-2 list-decimal pl-4">
+                        ${JOB_DATA.rules.map(rule => `<li>${rule}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- VI. Thâm Niên -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 border-l-4 border-l-green-500 flex items-start">
+                    <div class="text-green-500 text-2xl mr-3 mt-1"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 mb-1">VI. Chính Sách Thâm Niên</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Tăng lương cơ bản <strong class="text-green-600">${JOB_DATA.seniority.reward}</strong> (${JOB_DATA.seniority.max}) khi đạt điều kiện: <br>
+                            ${JOB_DATA.seniority.conditions.map(c => `• ${c}<br>`).join('')}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC TRỢ LÝ AI (PURPLE THEME) -->
+                <div class="bg-[#6B61F5] rounded-2xl p-5 shadow-lg relative overflow-hidden mt-8">
+                    <!-- Icon robot chìm dưới nền -->
+                    <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl text-white"><i class="fa-solid fa-robot"></i></div>
+                    
+                    <h3 class="font-bold text-lg mb-1 flex items-center text-white relative z-10">
+                        Trợ Lý AI Nội Bộ <span class="ml-2 text-sm animate-sparkle">✨</span>
+                    </h3>
+                    <p class="text-xs font-semibold text-white/80 uppercase tracking-wider mb-4 relative z-10">Hỏi ngay AI để giải đáp thắc mắc về Nội quy, bị trừ tiền hay cách xử lý tình huống!</p>
+
+                    <div class="space-y-3 relative z-10">
+                        <!-- Select Dropdown -->
+                        <div class="relative">
+                            <select id="ai-task-type" class="w-full text-sm font-medium bg-[#5A50E5] border border-white/30 text-white rounded-lg p-3 outline-none shadow-sm focus:border-white/50 appearance-none pr-10 cursor-pointer">
+                                ${JOB_DATA.aiConfig.taskOptions.map(opt => `<option value="${opt.id}" class="text-slate-800 bg-white">${opt.label}</option>`).join('')}
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+                        </div>
+                        
+                        <!-- Textarea -->
+                        <textarea id="ai-input" rows="2" class="w-full text-sm bg-[#5A50E5] bg-opacity-50 border border-white/30 text-white rounded-lg p-3 outline-none placeholder-white/60 focus:border-white/50 shadow-inner" placeholder="${JOB_DATA.aiConfig.taskOptions[0].placeholder}"></textarea>
+                        
+                        <!-- Lỗi -->
+                        <div id="ai-error" class="hidden text-xs text-red-200 font-medium">Vui lòng nhập câu hỏi để AI giải đáp nhé!</div>
+                        
+                        <!-- Nút gửi -->
+                        <button onclick="askGemini()" class="w-full bg-white hover:bg-gray-50 text-[#6B61F5] font-bold py-3 px-4 rounded-xl text-sm transition-colors shadow-md flex justify-center items-center">
+                            <span id="ai-btn-text">Gửi câu hỏi cho AI ✨</span>
+                            <span id="ai-loading" class="loader hidden ml-2"></span>
+                        </button>
+                        
+                        <!-- Kết quả -->
+                        <div id="ai-result-container" class="hidden mt-3">
+                            <div class="bg-white/10 border border-white/20 rounded-xl p-4 relative backdrop-blur-sm">
+                                <div class="text-[10px] text-white font-bold uppercase mb-2 tracking-wider">AI TRẢ LỜI:</div>
+                                <div id="ai-result-text" class="text-sm text-white leading-relaxed italic"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 pb-2 text-center text-xs text-slate-400 border-t border-slate-200 mt-8">
+                    <p>Phê duyệt bởi Ban Quản lý Nhà hàng</p>
+                    <p class="mt-1">Cập nhật lúc: ${JOB_DATA.meta.updateDate}</p>
+                </div>
+            </main>
+        `;
+
+        root.innerHTML = html;
+        initInteractions();
+    }
+
+    /* Kích hoạt hiệu ứng Mở/Đóng các thẻ Accordion */
+    function initInteractions() {
+        const accordionGroups = document.querySelectorAll('.accordion-group');
+        accordionGroups.forEach(group => {
+            const accordions = group.querySelectorAll('.accordion-btn');
+            accordions.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    accordions.forEach(otherBtn => {
+                        if(otherBtn !== this) {
+                            otherBtn.nextElementSibling.classList.remove('active');
+                            otherBtn.querySelector('.fa-chevron-down').classList.remove('rotate-180');
+                        }
+                    });
+                    const content = this.nextElementSibling;
+                    const icon = this.querySelector('.fa-chevron-down');
+                    content.classList.toggle('active');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+        });
+
+        // Thay đổi placeholder theo chức năng AI
+        document.getElementById('ai-task-type').addEventListener('change', function(e) {
+            const inputField = document.getElementById('ai-input');
+            const selectedOpt = JOB_DATA.aiConfig.taskOptions.find(opt => opt.id === e.target.value);
+            if(selectedOpt) inputField.placeholder = selectedOpt.placeholder;
+        });
+    }
+
+    /* ======================================================================
+       LOGIC KẾT NỐI GEMINI API
+       ====================================================================== */
+    const apiKey = ""; 
+
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    async function fetchWithRetry(url, options, maxRetries = 5) {
+        const delays = [1000, 2000, 4000, 8000, 16000];
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (i === maxRetries - 1) throw error;
+                await wait(delays[i]);
+            }
+        }
+    }
+
+    async function askGemini() {
+        const inputField = document.getElementById('ai-input');
+        const taskType = document.getElementById('ai-task-type').value;
+        const btnText = document.getElementById('ai-btn-text');
+        const loadingIndicator = document.getElementById('ai-loading');
+        const resultContainer = document.getElementById('ai-result-container');
+        const resultText = document.getElementById('ai-result-text');
+        const errorMsg = document.getElementById('ai-error');
+
+        const userQuery = inputField.value.trim();
+        if (!userQuery) {
+            errorMsg.classList.remove('hidden');
+            inputField.classList.add('border-red-400');
+            return;
+        } else {
+            errorMsg.classList.add('hidden');
+            inputField.classList.remove('border-red-400');
+        }
+
+        btnText.textContent = "Đang suy nghĩ...";
+        loadingIndicator.classList.remove('hidden');
+        resultContainer.classList.add('hidden');
+
+        // Phân loại logic Prompt
+        let systemPrompt = "";
+        if (taskType === 'policy') {
+            systemPrompt = `Bạn là Trợ lý Nhân sự thân thiện. Giải đáp thắc mắc dựa trên NỘI QUY NÀY:
+            ${JOB_DATA.aiConfig.policyContext}
+            QUY TẮC: Chỉ trả lời nội quy trên. Ngắn gọn, dễ hiểu. Nếu hỏi về phạt tiền, hãy tính sơ bộ số tiền hoặc phần trăm bị trừ.`;
+        } else if (taskType === 'upsell') {
+            systemPrompt = `Nhân viên vị trí ${JOB_DATA.meta.roleName} nhập món/tình huống. Gợi ý 1-2 câu thoại khéo léo, tự nhiên để tăng doanh thu. Dưới 60 chữ.`;
+        } else if (taskType === 'complaint') {
+            systemPrompt = `Khách phàn nàn. Gợi ý câu xin lỗi xoa dịu và hướng xử lý nhanh. Cực kỳ ngắn gọn, thực tế, dưới 60 chữ.`;
+        }
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] } };
+
+        try {
+            const data = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (responseText) {
+                // Tự động tô đậm bằng chữ trắng trong khung tím
+                responseText = responseText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white bg-white/20 px-1 rounded">$1</strong>').replace(/\n/g, '<br>');
+                resultText.innerHTML = responseText;
+                resultContainer.classList.remove('hidden');
+            } else {
+                resultText.innerHTML = "<i>AI đang bận, vui lòng thử lại sau nhé!</i>";
+                resultContainer.classList.remove('hidden');
+            }
+        } catch (error) {
+            resultText.innerHTML = "<span class='text-red-200'>Lỗi kết nối. Hãy kiểm tra API Key hoặc thử lại sau nhé!</span>";
+            resultContainer.classList.remove('hidden');
+        } finally {
+            btnText.textContent = "Gửi câu hỏi cho AI ✨";
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+    // Khởi chạy ứng dụng
+    renderApp();
+</script>
+
+</body>
+</html>
