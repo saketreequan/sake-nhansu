@@ -5,126 +5,252 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Danh sách vị trí tuyển dụng</title>
   <style>
+    /* Bảng màu tối giản, thanh lịch, tone ấm */
     :root {
-      --bg: #f7f2ea;
-      --card: #fffaf4;
-      --text: #2b211c;
-      --subtext: #76665c;
-      --line: #e5d9cc;
-      --accent: #8a6748;
-      --accent-hover: #6f5239;
+      --bg: #FDFBFA;          /* Nền trang sáng, sạch và ấm */
+      --card: #FFFFFF;        /* Nền thẻ trắng tinh */
+      --text: #201A16;        /* Đen xám đậm, dịu mắt hơn đen tuyền */
+      --subtext: #6B5E55;     /* Xám nâu cho nội dung phụ */
+      --line: #EBE5DF;        /* Viền mảnh, tinh tế */
+      --accent: #8A6748;      /* Màu nhấn chủ đạo (nâu gỗ sang trọng) */
+      --accent-hover: #6F5239;
+      --note-bg: #F6EFEB;     /* Nền cho khối lưu ý/gợi ý */
+      
+      --radius-card: 16px;
+      --radius-note: 12px;
+      --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
+      /* Dùng sans-serif cho body để dễ đọc, hiện đại */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Giới hạn độ rộng để đọc thoải mái như cẩm nang */
     .container {
-      width: min(920px, calc(100% - 32px));
+      width: min(800px, calc(100% - 40px));
       margin: 0 auto;
-      padding: 40px 0 56px;
+      padding: 60px 0 80px;
     }
 
+    /* Header Styling */
     .header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 48px;
     }
 
-    .header p {
-      margin: 0 0 8px;
-      font-size: 0.9rem;
-      letter-spacing: 0.08em;
+    .header p.eyebrow {
+      margin: 0 0 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--accent);
     }
 
     .header h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      line-height: 1.1;
+      /* Dùng serif cho Tiêu đề để tạo sự lịch sự, trang trọng */
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0 0 16px;
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      line-height: 1.2;
+      color: var(--text);
     }
 
     .header .note {
       margin: 0 auto;
-      max-width: 560px;
+      max-width: 500px;
       color: var(--subtext);
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
+    /* Note/Callout Block (Phong cách Notion/Handbook) */
     .quick-note {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px 18px;
-      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--note-bg);
+      border-radius: var(--radius-note);
+      padding: 16px 20px;
+      margin-bottom: 40px;
       color: var(--subtext);
-      font-size: 0.98rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      display: block;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 20px;
-      transition: 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: #d6c3b1;
-    }
-
-    .card small {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--accent);
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 1.3rem;
-      line-height: 1.25;
-    }
-
-    .card p {
-      margin: 0;
-      color: var(--subtext);
-      font-size: 0.96rem;
-    }
-
-    .arrow {
-      display: inline-block;
-      margin-top: 14px;
-      color: var(--accent);
       font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .quick-note svg {
+      flex-shrink: 0;
+      color: var(--accent);
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+    }
+
+    .quick-note strong {
+      color: var(--text);
       font-weight: 600;
     }
 
-    @media (max-width: 700px) {
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    /* Card Styling */
+    .card {
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-card);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #D8CCC0;
+      box-shadow: 0 12px 24px -8px rgba(138, 103, 72, 0.1);
+    }
+
+    .card small {
+      display: inline-block;
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: monospace;
+      letter-spacing: 0.05em;
+      background: var(--note-bg);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Thêm style cho phần header của card và các huy hiệu (badges) */
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .card-header small {
+      margin-bottom: 0;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* Màu sắc huy hiệu Full-time / Part-time */
+    .badge.ft { background: #EBE5DF; color: #5C4A3D; } 
+    .badge.pt { background: #E6F4EA; color: #137333; } 
+
+    /* Màu sắc riêng cho từng vị trí (áp dụng vào số thứ tự) */
+    .pos-pv { background: #E8F0FE !important; color: #1967D2 !important; } /* Phục vụ - Xanh dương */
+    .pos-tt { background: #FEF0E6 !important; color: #D97706 !important; } /* Tiếp thực - Cam */
+    .pos-tv { background: #F0FDF4 !important; color: #16A34A !important; } /* Tạp vụ - Xanh lá */
+    .pos-ql { background: #F3E8FD !important; color: #681DA8 !important; } /* Quản lý - Tím */
+
+    /* Khung giờ làm việc */
+    .hours {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--subtext);
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #FDFBFA;
+      border: 1px solid var(--line);
+    }
+
+    .hours svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .card h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      line-height: 1.3;
+      color: var(--text);
+      transition: color 0.2s ease;
+    }
+
+    .card p {
+      margin: 0 0 24px;
+      color: var(--subtext);
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+
+    /* Action arrow inside card */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: auto;
+      transition: var(--transition);
+    }
+
+    .card-footer svg {
+      width: 16px;
+      height: 16px;
+      transition: var(--transition);
+    }
+
+    .card:hover h2 {
+      color: var(--accent);
+    }
+
+    .card:hover .card-footer {
+      color: var(--accent-hover);
+    }
+
+    .card:hover .card-footer svg {
+      transform: translateX(4px);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
       .grid {
         grid-template-columns: 1fr;
       }
-
       .container {
-        padding-top: 28px;
+        padding: 40px 0 60px;
+      }
+      .card {
+        padding: 20px;
       }
     }
   </style>
@@ -132,50 +258,140 @@
 <body>
   <main class="container">
     <header class="header">
-      <p>Tuyển dụng</p>
+      <p class="eyebrow">Tuyển dụng</p>
       <h1>Danh sách vị trí</h1>
-      <div class="note">Chọn vị trí phù hợp để xem nội dung chi tiết.</div>
+      <p class="note">Chọn vị trí phù hợp với bạn để xem thông tin chi tiết về công việc, quyền lợi và yêu cầu.</p>
     </header>
 
+    <!-- Khối note thiết kế kiểu callout của Notion -->
     <section class="quick-note">
-      Gợi ý: nếu bạn cần vị trí làm việc theo ca linh hoạt, chọn <strong>Part-time</strong>.
-      Nếu bạn muốn vị trí toàn thời gian hoặc quản lý, chọn các mục còn lại bên dưới.
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        Gợi ý: Nếu bạn cần thời gian làm việc linh hoạt, hãy ưu tiên chọn <strong>Part-time</strong>. Nếu bạn mong muốn gắn bó toàn thời gian hoặc phát triển lên quản lý, vui lòng chọn các mục còn lại.
+      </div>
     </section>
 
     <section class="grid">
+      <!-- Card 01 -->
       <a class="card" href="page1.html">
-        <small>01</small>
-        <h2>NV-PV Full-time</h2>
-        <p>Vị trí phục vụ toàn thời gian.</p>
-        <span class="arrow">Xem chi tiết →</span>
+        <div>
+          <div class="card-header">
+            <small class="pos-pv">01</small>
+            <span class="badge ft">Full-time</span>
+          </div>
+          <h2>Nhân viên Phục vụ</h2>
+          <div class="hours">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Ca A: 06:30 - 14:30 | Ca B: 14:30 - 22:30
+          </div>
+          <p>Đảm bảo trải nghiệm dịch vụ trọn vẹn cho khách hàng với thời gian làm việc cố định.</p>
+        </div>
+        <div class="card-footer">
+          Xem chi tiết
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
       </a>
 
+      <!-- Card 02 -->
       <a class="card" href="page2.html">
-        <small>02</small>
-        <h2>NV-PV Part-time</h2>
-        <p>Vị trí phục vụ theo ca linh hoạt.</p>
-        <span class="arrow">Xem chi tiết →</span>
+        <div>
+          <div class="card-header">
+            <small class="pos-pv">02</small>
+            <span class="badge pt">Part-time</span>
+          </div>
+          <h2>Nhân viên Phục vụ</h2>
+          <div class="hours">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Đăng ký linh hoạt (4 - 6 tiếng/ca)
+          </div>
+          <p>Phù hợp với các bạn sinh viên, làm việc theo ca đăng ký linh hoạt hàng tuần.</p>
+        </div>
+        <div class="card-footer">
+          Xem chi tiết
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
       </a>
 
+      <!-- Card 03 -->
       <a class="card" href="page3.html">
-        <small>03</small>
-        <h2>NV-Tiếp thực Full-time</h2>
-        <p>Vị trí hỗ trợ vận hành phục vụ.</p>
-        <span class="arrow">Xem chi tiết →</span>
+        <div>
+          <div class="card-header">
+            <small class="pos-tt">03</small>
+            <span class="badge ft">Full-time</span>
+          </div>
+          <h2>Nhân viên Tiếp thực</h2>
+          <div class="hours">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Ca A: 08:00 - 16:00 | Ca B: 16:00 - 24:00
+          </div>
+          <p>Hỗ trợ vận hành mượt mà giữa không gian bếp và khu vực phục vụ khách hàng.</p>
+        </div>
+        <div class="card-footer">
+          Xem chi tiết
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
       </a>
 
+      <!-- Card 04 -->
       <a class="card" href="page4.html">
-        <small>04</small>
-        <h2>NV-Tạp vụ Full-time</h2>
-        <p>Vị trí vệ sinh và hỗ trợ không gian.</p>
-        <span class="arrow">Xem chi tiết →</span>
+        <div>
+          <div class="card-header">
+            <small class="pos-tv">04</small>
+            <span class="badge ft">Full-time</span>
+          </div>
+          <h2>Nhân viên Tạp vụ</h2>
+          <div class="hours">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Ca A: 06:00 - 14:00 | Ca B: 14:00 - 22:00
+          </div>
+          <p>Chịu trách nhiệm giữ gìn vệ sinh và đảm bảo không gian quán luôn sạch sẽ, gọn gàng.</p>
+        </div>
+        <div class="card-footer">
+          Xem chi tiết
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
       </a>
 
-      <a class="card" href="page5.html">
-        <small>05</small>
-        <h2>Giám sát - Quản lý</h2>
-        <p>Vị trí điều phối và quản lý vận hành.</p>
-        <span class="arrow">Xem chi tiết →</span>
+      <!-- Card 05 (Chiếm trọn bề ngang nếu số lẻ để cân bằng layout) -->
+      <a class="card" href="page5.html" style="grid-column: 1 / -1;">
+        <div>
+          <div class="card-header">
+            <small class="pos-ql">05</small>
+            <span class="badge ft">Full-time</span>
+          </div>
+          <h2>Giám sát - Quản lý Cửa hàng</h2>
+          <div class="hours">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Xoay ca linh hoạt (8 tiếng/ngày)
+          </div>
+          <p>Vị trí nòng cốt chịu trách nhiệm điều phối toàn bộ hoạt động vận hành, quản lý nhân sự và đảm bảo chất lượng dịch vụ.</p>
+        </div>
+        <div class="card-footer">
+          Xem chi tiết
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
       </a>
     </section>
   </main>
