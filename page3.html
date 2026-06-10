@@ -6,20 +6,20 @@
     <title>Cẩm Nang Công Việc & KPI - Runner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .app-container { max-width: 480px; margin: 0 auto; background-color: #ffffff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .accordion-content.active { max-height: 1500px; transition: max-height 0.5s ease-in; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .app-container { max-width: 480px; margin: 0 auto; background-color: #ffffff; min-height: 100vh; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .accordion-content.active { max-height: 1500px; transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .rotate-180 { transform: rotate(180deg); }
-        @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-        .animate-sparkle { animation: sparkle 1.5s infinite; }
+        @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.9; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-sparkle { animation: sparkle 2s infinite ease-in-out; }
         .loader { border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 3px solid #ffffff; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .semantic-gradient { background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #22c55e 100%); }
-        /* Header Gradient chuẩn theo hình ảnh */
-        .header-gradient { background: linear-gradient(180deg, #e67e22 0%, #d35400 100%); }
+        .semantic-gradient { background: linear-gradient(90deg, #f43f5e 0%, #f59e0b 50%, #10b981 100%); }
+        /* Header Gradient rực rỡ, hiện đại */
+        .header-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%); }
     </style>
 </head>
 <body class="text-slate-800">
@@ -59,7 +59,7 @@
                 items: [
                     "<strong>Sắp xếp:</strong> Xếp bia theo loại, nhãn; dễ thấy, dễ lấy; không lẫn hàng lỗi/cận date.",
                     "<strong>Bổ sung:</strong> Đẩy bia vào tủ lạnh theo tốc độ bán thực tế.",
-                    "<strong>Nguyên tắc:</strong> <strong class='text-green-600 font-bold'>Ưu tiên bán bia lạnh trước bia nóng.</strong>",
+                    "<strong>Nguyên tắc:</strong> <strong class='text-emerald-600 font-bold'>Ưu tiên bán bia lạnh trước bia nóng.</strong>",
                     "<strong>Nhập hàng:</strong> Kiểm tra đúng-đủ số lượng cùng Thu ngân; ký phiếu giao hàng."
                 ]
             },
@@ -68,7 +68,7 @@
                 items: [
                     "<strong>Sản xuất:</strong> Pha đúng công thức, định lượng nhà hàng.",
                     "<strong>Kiểm soát:</strong> Kiểm tra vệ sinh ít nhất 2 lần trước giờ cao điểm.",
-                    "<strong>Duy trì:</strong> Bổ sung ngay khi mức tồn <strong class='text-red-600 font-bold'>dưới 20%.</strong>"
+                    "<strong>Duy trì:</strong> Bổ sung ngay khi mức tồn <strong class='text-rose-600 font-bold'>dưới 20%.</strong>"
                 ]
             }
         ],
@@ -81,9 +81,9 @@
             peakNote: "Khung giờ bắt buộc tập trung, ưu tiên tuyệt đối chạy món và bia."
         },
         salary: {
-            base: "4.500.000",
+            base: "4.900.000",
             kpiMax: "1.600.000",
-            total: "6.100.000",
+            total: "6.500.000",
             tipPolicy: "Được nhận một phần tiền tip từ nhân viên phục vụ theo quy định hiện hành."
         },
         kpis: [
@@ -91,7 +91,7 @@
                 icon: "⏰", title: "KPI Chuyên cần", reward: "+ 300.000đ",
                 positives: ["Đi làm đúng giờ, nghỉ không quá 02 ngày/tháng.", "Báo cáo nghỉ/đổi ca đúng quy định."],
                 negatives: [],
-                alert: "Nghỉ quá 02 ngày hoặc vi phạm quy định báo nghỉ ➔ <strong class='text-red-600 font-bold'>Trừ 100% chuyên cần</strong>"
+                alert: "Nghỉ quá 02 ngày hoặc vi phạm quy định báo nghỉ ➔ <strong class='text-rose-600 font-bold'>Trừ 100% chuyên cần</strong>"
             },
             {
                 icon: "👔", title: "KPI Kỷ luật & Chấm công", reward: "+ 300.000đ",
@@ -113,12 +113,12 @@
             }
         ],
         kpiScale: [
-            { error: "0 - 1 Lỗi", percent: "100%", color: "text-green-600" },
+            { error: "0 - 1 Lỗi", percent: "100%", color: "text-emerald-600" },
             { error: "2 - 3 Lỗi", percent: "90%", color: "text-slate-800" },
             { error: "4 - 5 Lỗi", percent: "70%", color: "text-slate-800" },
-            { error: "6 - 7 Lỗi", percent: "50%", color: "text-orange-500" },
-            { error: "8 - 9 Lỗi", percent: "30%", color: "text-red-600" },
-            { error: "≥ 10 Lỗi", percent: "0%", color: "text-red-600" }
+            { error: "6 - 7 Lỗi", percent: "50%", color: "text-amber-500" },
+            { error: "8 - 9 Lỗi", percent: "30%", color: "text-rose-600" },
+            { error: "≥ 10 Lỗi", percent: "0%", color: "text-rose-600" }
         ],
         rules: [
             "Lỗi tính dựa trên sổ ca, checklist, camera hoặc xác nhận Quản lý.",
@@ -155,7 +155,7 @@
         },
         {
             keywords: ["lương", "tổng", "thu nhập", "bao nhiêu"],
-            answer: "Tổng thu nhập tối đa của em là <b>6.100.000đ</b>. Trong đó: Lương cơ bản 4.500.000đ và tổng KPI tối đa 1.600.000đ. Ngoài ra em còn được nhận thêm một phần tiền Tip từ bộ phận Phục vụ."
+            answer: "Tổng thu nhập tối đa hiện tại của em sau khi được điều chỉnh tăng là <b>6.500.000đ</b>. Trong đó: Lương cơ bản mới là 4.900.000đ và tổng KPI tối đa 1.600.000đ. Ngoài ra em còn nhận tiền Tip từ bộ phận Phục vụ."
         },
         {
             keywords: ["kpi", "tính sao", "thang điểm"],
@@ -163,7 +163,7 @@
         },
         {
             keywords: ["mời bia", "upsell", "bán thêm"],
-            answer: "Khi mang món nướng hoặc hải sản ra, em có thể mời khéo: 'Dạ món này dùng kèm với bia [Tên bia] lạnh đang rất hợp, em lấy cho bàn mình thêm mấy lon bia lạnh nhé ạ?'"
+            answer: "Khi mang món nướng hoặc hải sản ra, em có thể mời khéo: 'Dạ món này dùng kèm với bia lạnh đang rất hợp, em lấy cho bàn mình thêm mấy lon bia lạnh nhé ạ?'"
         },
         {
             keywords: ["xin lỗi", "phàn nàn", "bia không lạnh"],
@@ -178,114 +178,269 @@
     function renderApp() {
         const root = document.getElementById('app-root');
         let htmlContent = `
-            <header class="header-gradient text-white p-6 pt-10 pb-8 rounded-b-[40px] shadow-xl relative z-20">
-                <div class="flex justify-between items-start mb-4">
-                    <span class="bg-white/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">${JOB_DATA.meta.version}</span>
-                    <i class="fa-solid fa-bell text-xl opacity-90 animate-pulse"></i>
+            <!-- Header - Tái cấu trúc theo diện mạo mới hiện đại hơn -->
+            <header class="header-gradient text-white p-6 pt-10 pb-10 rounded-b-[40px] shadow-2xl relative z-20">
+                <div class="flex justify-between items-start mb-5">
+                    <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-widest shadow-sm">${JOB_DATA.meta.version}</span>
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md">
+                        <i class="fa-solid fa-bell text-lg opacity-90 animate-pulse"></i>
+                    </div>
                 </div>
-                <h1 class="text-3xl font-extrabold tracking-tight mb-2">Cẩm Nang Công Việc</h1>
-                <p class="text-white/90 text-sm font-medium flex items-center">
-                    <i class="fa-solid fa-user-tie mr-2"></i> Vị trí: ${JOB_DATA.meta.roleName}
-                </p>
+                <h1 class="text-3xl font-black tracking-tight mb-3">Cẩm Nang Công Việc</h1>
+                
+                <!-- Sửa đổi hiển thị: Vị trí: Nhân viên Runner (Full-time) -->
+                <div class="inline-flex items-center bg-black/15 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 shadow-sm mt-1">
+                    <div class="w-8 h-8 rounded-xl bg-orange-500 flex items-center justify-center mr-3 shadow-md">
+                        <i class="fa-solid fa-user-tie text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-white text-base font-extrabold tracking-tight">Vị trí: ${JOB_DATA.meta.roleName}</p>
+                    </div>
+                </div>
             </header>
 
             <main class="px-5 -mt-6 relative z-30 space-y-6 pb-20">
-                <section class="bg-white border-2 border-green-500 rounded-3xl p-6 shadow-md relative overflow-hidden text-center">
-                    <div class="absolute -right-6 -bottom-6 opacity-5 text-8xl text-green-600 rotate-12"><i class="fa-solid fa-coins"></i></div>
+                <!-- TỔNG THU NHẬP -->
+                <section class="bg-white border-2 border-emerald-500 rounded-[2rem] p-6 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-[0.03] text-9xl text-emerald-600 rotate-12"><i class="fa-solid fa-coins"></i></div>
                     <div class="relative z-10 text-center">
-                        <p class="text-slate-500 font-bold mb-1 text-xs uppercase tracking-widest">Tổng thu nhập tối đa</p>
-                        <h2 class="text-5xl font-black text-green-600 mb-6 tracking-tight">${JOB_DATA.salary.total}<span class="text-xl ml-1">đ</span></h2>
+                        <p class="text-slate-400 font-black mb-1 text-[10px] uppercase tracking-widest">Tổng thu nhập tối đa</p>
+                        <h2 class="text-5xl font-black text-emerald-600 mb-6 tracking-tight">${JOB_DATA.salary.total}<span class="text-xl ml-1 font-bold">đ</span></h2>
+                        
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100"><p class="text-[10px] text-slate-400 font-bold uppercase">Lương cơ bản</p><p class="font-extrabold text-slate-700">${JOB_DATA.salary.base}đ</p></div>
-                            <div class="bg-green-50 p-3 rounded-2xl border border-green-100"><p class="text-[10px] text-green-500 font-bold uppercase">Thưởng KPI</p><p class="font-extrabold text-green-600">+${JOB_DATA.salary.kpiMax}đ</p></div>
+                            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100/80">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-0.5">Lương cơ bản</p>
+                                <p class="font-black text-slate-700 text-lg">${JOB_DATA.salary.base}đ</p>
+                            </div>
+                            <div class="bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-100">
+                                <p class="text-[10px] text-emerald-600 font-bold uppercase mb-0.5">Thưởng KPI</p>
+                                <p class="font-black text-emerald-600 text-lg">+${JOB_DATA.salary.kpiMax}đ</p>
+                            </div>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-4 italic underline decoration-dotted font-medium italic">${JOB_DATA.salary.tipPolicy}</p>
+                        <p class="text-[10px] text-slate-400 mt-4 italic font-medium flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-circle-info text-emerald-500"></i> ${JOB_DATA.salary.tipPolicy}
+                        </p>
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-clock text-orange-400 mr-2"></i> I. Thời gian làm việc</h3>
+                <!-- I. Thời gian làm việc -->
+                <section class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-clock text-orange-500 mr-2.5 text-base"></i> I. Thời gian làm việc</h3>
                     <div class="space-y-4">
-                        ${JOB_DATA.workHours.shifts.map(shift => `<div class="flex justify-between items-start border-b border-slate-50 pb-2 last:border-0"><div class="text-sm font-bold text-slate-700">${shift.name}</div><div class="text-right"><p class="text-sm text-slate-600 font-bold">${shift.time}</p><p class="text-[10px] text-slate-400 font-medium">${shift.note}</p></div></div>`).join('')}
-                        <div class="bg-red-50 p-4 rounded-2xl border border-red-100 mt-2 text-center sm:text-left"><p class="text-[11px] text-red-600 font-black uppercase mb-1"><i class="fa-solid fa-fire mr-1"></i> Khung giờ cao điểm:</p><p class="text-xs text-red-700 font-medium">${JOB_DATA.workHours.peakHours}</p></div>
+                        ${JOB_DATA.workHours.shifts.map(shift => `
+                            <div class="flex justify-between items-start border-b border-slate-50 pb-2.5 last:border-0 last:pb-0">
+                                <div class="text-sm font-bold text-slate-700">${shift.name}</div>
+                                <div class="text-right">
+                                    <p class="text-sm text-slate-600 font-extrabold font-mono">${shift.time}</p>
+                                    <p class="text-[10px] text-slate-400 font-semibold">${shift.note}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-100/50 mt-2 text-center sm:text-left">
+                            <p class="text-[11px] text-rose-600 font-black uppercase mb-1 flex items-center justify-center sm:justify-start gap-1">
+                                <i class="fa-solid fa-fire text-xs"></i> Khung giờ cao điểm:
+                            </p>
+                            <p class="text-xs text-rose-700 font-extrabold tracking-wide">${JOB_DATA.workHours.peakHours}</p>
+                        </div>
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-bullseye text-red-500 mr-2"></i> II. Mục tiêu vị trí</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed text-justify mb-3">${JOB_DATA.objective.desc}</p>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-semibold text-slate-700"><i class="fa-solid fa-check-circle text-green-500 mr-1"></i> ${JOB_DATA.objective.goal}</div>
+                <!-- II. Mục tiêu vị trí -->
+                <section class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg">
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-bullseye text-rose-500 mr-2.5 text-base"></i> II. Mục tiêu vị trí</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed text-justify mb-4">${JOB_DATA.objective.desc}</p>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-700 leading-relaxed">
+                        <i class="fa-solid fa-check-circle text-emerald-500 mr-1.5 text-sm shrink-0"></i> ${JOB_DATA.objective.goal}
+                    </div>
                 </section>
 
-                <section>
-                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-list-check text-blue-500 mr-2"></i> III. Mô tả công việc chi tiết</h3>
+                <!-- III. Mô tả công việc chi tiết -->
+                <section class="space-y-3">
+                    <h3 class="font-black text-slate-800 mb-1 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-list-check text-blue-500 mr-2.5 text-base"></i> III. Mô tả công việc chi tiết</h3>
                     <div class="space-y-3">
-                        ${JOB_DATA.jobDescriptions.map((jd, idx) => `<div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm"><button onclick="toggleAccordion('jd-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50 transition-all"><div class="font-bold text-slate-700 text-sm">${jd.title}</div><i class="fa-solid fa-chevron-down text-slate-300 transition-transform duration-300"></i></button><div id="jd-${idx}" class="accordion-content bg-slate-50 border-t border-slate-100"><div class="p-4 text-sm text-slate-600 space-y-3">${jd.items.map(item => `<div class="flex items-start"><i class="fa-solid fa-caret-right text-blue-400 mt-1 mr-2"></i><span>${item}</span></div>`).join('')}</div></div></div>`).join('')}
+                        ${JOB_DATA.jobDescriptions.map((jd, idx) => `
+                            <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-md">
+                                <button onclick="toggleAccordion('jd-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50/50 transition-all">
+                                    <div class="font-extrabold text-slate-700 text-sm tracking-tight">${jd.title}</div>
+                                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                                </button>
+                                <div id="jd-${idx}" class="accordion-content bg-slate-50/50 border-t border-slate-100">
+                                    <div class="p-4 text-sm text-slate-600 space-y-3">
+                                        ${jd.items.map(item => `
+                                            <div class="flex items-start">
+                                                <i class="fa-solid fa-caret-right text-blue-400 mt-1 mr-2.5 shrink-0 text-xs"></i>
+                                                <span class="leading-relaxed">${item}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 </section>
 
+                <!-- IV. Trạng thái vận hành -->
                 <section class="space-y-4">
-                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-bolt text-yellow-500 mr-2"></i> IV. Trạng thái vận hành</h3>
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"><p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái kho bia</p><div class="flex justify-between text-[10px] font-bold mb-1"><span class="text-red-500">Cạn hàng</span><span class="text-green-600">Sẵn sàng</span></div><div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2"><div class="h-full semantic-gradient w-[90%]"></div></div><p class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1"></i> Luôn ưu tiên Bia lạnh trước Bia nóng.</p></div>
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"><p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái nước chấm</p><div class="flex justify-between text-[10px] font-bold mb-1"><span class="text-red-500">Thiếu (&lt;20%)</span><span class="text-green-600">Đầy đủ (>80%)</span></div><div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2"><div class="h-full semantic-gradient w-[85%]"></div></div><p class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1"></i> Tuyệt đối không để khách chờ nước chấm.</p></div>
+                    <h3 class="font-black text-slate-800 mb-1 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-bolt text-amber-500 mr-2.5 text-base"></i> IV. Trạng thái vận hành</h3>
+                    
+                    <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg">
+                        <p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái kho bia</p>
+                        <div class="flex justify-between text-[10px] font-black mb-1.5">
+                            <span class="text-rose-500">Cạn hàng</span>
+                            <span class="text-emerald-600">Sẵn sàng</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2.5">
+                            <div class="h-full semantic-gradient w-[90%]"></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 font-medium italic flex items-center gap-1">
+                            <i class="fa-solid fa-circle-info text-amber-500"></i> Luôn ưu tiên Bia lạnh trước Bia nóng.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg">
+                        <p class="text-[11px] font-black text-slate-400 uppercase mb-3 tracking-widest">Trạng thái nước chấm</p>
+                        <div class="flex justify-between text-[10px] font-black mb-1.5">
+                            <span class="text-rose-500">Thiếu (&lt;20%)</span>
+                            <span class="text-emerald-600">Đầy đủ (>80%)</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-2.5">
+                            <div class="h-full semantic-gradient w-[85%]"></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 font-medium italic flex items-center gap-1">
+                            <i class="fa-solid fa-circle-info text-amber-500"></i> Tuyệt đối không để khách chờ nước chấm.
+                        </p>
+                    </div>
                 </section>
 
-                <section>
-                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-chart-line text-green-500 mr-2"></i> V. Chỉ tiêu KPI chi tiết</h3>
-                    <div class="space-y-3 mb-6">
-                        ${JOB_DATA.kpis.map((kpi, idx) => `<div class="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm"><button onclick="toggleAccordion('kpi-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50 transition-all"><div class="flex items-center"><span class="text-xl mr-3">${kpi.icon}</span><div class="text-left"><div class="font-bold text-slate-700 text-sm">${kpi.title}</div><div class="text-green-600 font-black text-xs">${kpi.reward}</div></div></div><i class="fa-solid fa-chevron-down text-slate-300 transition-transform duration-300"></i></button><div id="kpi-${idx}" class="accordion-content bg-slate-50 border-t border-slate-100"><div class="p-4 text-sm text-slate-600 space-y-2">${kpi.positives.map(p => `<div class="flex items-start"><i class="fa-solid fa-check text-green-500 mr-2 mt-1"></i><span>${p}</span></div>`).join('')}${kpi.negatives.length > 0 ? `<div class="text-[10px] font-black text-red-500 uppercase mt-2 mb-1">Các lỗi vi phạm:</div>${kpi.negatives.map(n => `<div class="flex items-start text-xs text-red-600 mb-1"><i class="fa-solid fa-xmark mr-2 mt-1"></i><span>${n}</span></div>`).join('')}` : ''}${kpi.alert ? `<div class="bg-red-100 text-red-700 p-2 rounded-xl text-[10px] mt-2 border border-red-200">${kpi.alert}</div>` : ''}</div></div></div>`).join('')}
+                <!-- V. KPI chi tiết & Thang điểm trừ -->
+                <section class="space-y-4">
+                    <h3 class="font-black text-slate-800 mb-1 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-chart-line text-emerald-500 mr-2.5 text-base"></i> V. Chỉ tiêu KPI chi tiết</h3>
+                    <div class="space-y-3">
+                        ${JOB_DATA.kpis.map((kpi, idx) => `
+                            <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-md">
+                                <button onclick="toggleAccordion('kpi-${idx}', this)" class="w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50/50 transition-all">
+                                    <div class="flex items-center">
+                                        <span class="text-2xl mr-3">${kpi.icon}</span>
+                                        <div class="text-left">
+                                            <div class="font-extrabold text-slate-700 text-sm tracking-tight">${kpi.title}</div>
+                                            <div class="text-emerald-600 font-black text-xs mt-0.5">${kpi.reward}</div>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-down text-slate-300 transition-transform duration-300"></i>
+                                </button>
+                                <div id="kpi-${idx}" class="accordion-content bg-slate-50/50 border-t border-slate-100">
+                                    <div class="p-4 text-sm text-slate-600 space-y-2">
+                                        ${kpi.positives.map(p => `
+                                            <div class="flex items-start">
+                                                <i class="fa-solid fa-check text-emerald-500 mr-2 mt-1 shrink-0 text-xs"></i>
+                                                <span class="leading-relaxed">${p}</span>
+                                            </div>
+                                        `).join('')}
+                                        ${kpi.negatives.length > 0 ? `
+                                            <div class="text-[10px] font-black text-rose-500 uppercase mt-3 mb-1.5 tracking-wider">Các lỗi vi phạm:</div>
+                                            ${kpi.negatives.map(n => `
+                                                <div class="flex items-start text-xs text-rose-600 mb-1">
+                                                    <i class="fa-solid fa-xmark mr-2 mt-1 shrink-0 text-xs"></i>
+                                                    <span class="leading-relaxed">${n}</span>
+                                                </div>
+                                            `).join('')}
+                                        ` : ''}
+                                        ${kpi.alert ? `
+                                            <div class="bg-rose-50 text-rose-700 p-3 rounded-xl text-[10px] mt-3 border border-rose-100 font-medium leading-relaxed">
+                                                ${kpi.alert}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
-                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6 mt-4">
-                        <h4 class="font-extrabold text-[#2c3e50] text-lg mb-1 tracking-tight">Thang Điểm Trừ (Áp dụng ĐỘC LẬP)</h4>
-                        <p class="text-[11px] text-blue-600 italic mb-4 leading-relaxed font-medium">Ví dụ: Vi phạm 4 lỗi Kỷ luật (nhận 70% của 300k), 2 lỗi Vận hành (nhận 90% của 500k).</p>
+
+                    <!-- THANG ĐIỂM TRỪ TRỰC QUAN -->
+                    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden p-6 mt-4">
+                        <h4 class="font-black text-slate-800 text-lg mb-1 tracking-tight">Thang Điểm Trừ (Áp dụng ĐỘC LẬP)</h4>
+                        <p class="text-xs text-slate-400 font-medium mb-3">Lỗi của mục nào tính riêng mục đó, không cộng dồn chung.</p>
+                        <p class="text-[11px] text-blue-600 italic mb-4 leading-relaxed font-semibold bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                            Ví dụ: Vi phạm 4 lỗi Kỷ luật (nhận 70% của 300k), 2 lỗi Vận hành (nhận 90% của 500k).
+                        </p>
                         <div class="border border-slate-100 rounded-2xl overflow-hidden">
                             <table class="w-full text-center text-sm">
-                                <thead class="bg-slate-50/80"><tr class="text-slate-500 font-bold border-b border-slate-100"><th class="py-3 border-r border-slate-100 uppercase text-[10px]">Số lỗi</th><th class="uppercase text-[10px]">Mức nhận</th></tr></thead>
-                                <tbody>${JOB_DATA.kpiScale.map(scale => `<tr><td class="py-3 font-medium text-slate-600 border-r border-slate-100 border-b border-slate-50">${scale.error}</td><td class="py-3 font-black ${scale.color} border-b border-slate-50">${scale.percent}</td></tr>`).join('')}</tbody>
+                                <thead class="bg-slate-50"><tr class="text-slate-500 font-bold border-b border-slate-100"><th class="py-3 border-r border-slate-100 uppercase text-[9px] tracking-wider">Số lỗi</th><th class="uppercase text-[9px] tracking-wider">Mức nhận</th></tr></thead>
+                                <tbody>
+                                    ${JOB_DATA.kpiScale.map(scale => `
+                                        <tr class="border-b border-slate-50 last:border-0">
+                                            <td class="py-3 font-semibold text-slate-600 border-r border-slate-100">${scale.error}</td>
+                                            <td class="py-3 font-black ${scale.color}">${scale.percent}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-scale-balanced text-red-600 mr-2"></i> VI. Nguyên tắc ghi nhận lỗi</h3>
+                <!-- VI. Nguyên tắc ghi nhận lỗi -->
+                <section class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-scale-balanced text-rose-500 mr-2.5 text-base"></i> VI. Nguyên tắc ghi nhận lỗi</h3>
                     <div class="space-y-3">
-                        ${JOB_DATA.rules.map(rule => `<div class="flex items-start text-sm text-slate-600"><i class="fa-solid fa-circle text-[6px] text-slate-300 mt-2 mr-3 shrink-0"></i><p>${rule}</p></div>`).join('')}
+                        ${JOB_DATA.rules.map(rule => `
+                            <div class="flex items-start text-sm text-slate-600 leading-relaxed">
+                                <i class="fa-solid fa-circle text-[5px] text-slate-300 mt-2 mr-3 shrink-0"></i>
+                                <p>${rule}</p>
+                            </div>
+                        `).join('')}
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm border-l-4 border-l-green-500">
-                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-sm tracking-wide"><i class="fa-solid fa-award text-green-500 mr-2"></i> VII. Chính sách thâm niên</h3>
-                    <div class="flex items-center space-x-3 mb-4"><div class="text-green-600 font-black text-lg">${JOB_DATA.seniority.reward}</div><div class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase">${JOB_DATA.seniority.max}</div></div>
-                    <div class="space-y-2">${JOB_DATA.seniority.conditions.map(cond => `<div class="flex items-start text-sm text-slate-600"><i class="fa-solid fa-check text-green-500 mt-1 mr-3 shrink-0"></i><p>${cond}</p></div>`).join('')}</div>
+                <!-- VII. Chính sách thâm niên -->
+                <section class="bg-white rounded-3xl p-5 border border-slate-100 shadow-lg border-l-4 border-l-emerald-500">
+                    <h3 class="font-black text-slate-800 mb-3 flex items-center uppercase text-xs tracking-wider"><i class="fa-solid fa-award text-emerald-500 mr-2.5 text-base"></i> VII. Chính sách thâm niên</h3>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="text-emerald-600 font-black text-lg">${JOB_DATA.seniority.reward}</div>
+                        <div class="text-[10px] bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">${JOB_DATA.seniority.max}</div>
+                    </div>
+                    <div class="space-y-2.5">
+                        ${JOB_DATA.seniority.conditions.map(cond => `
+                            <div class="flex items-start text-sm text-slate-600 leading-relaxed">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-1 mr-3 shrink-0 text-xs"></i>
+                                <p>${cond}</p>
+                            </div>
+                        `).join('')}
+                    </div>
                 </section>
 
                 <!-- AI SAKE Assistant -->
-                <section class="bg-indigo-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                <section class="bg-indigo-650 rounded-[2rem] p-6 text-white shadow-2xl relative overflow-hidden bg-indigo-600">
                     <div class="absolute -right-6 -bottom-6 opacity-20 text-7xl"><i class="fa-solid fa-robot"></i></div>
                     <div class="relative z-10">
-                        <h3 class="font-black mb-1 flex items-center uppercase text-sm tracking-wide">Trợ Lý AI Sake <span class="ml-2 text-xs animate-sparkle">✨</span></h3>
-                        <p class="text-[10px] text-indigo-100 mb-4 font-bold tracking-widest uppercase tracking-widest">Hệ thống hỗ trợ Runner nội bộ</p>
-                        <div class="space-y-3">
-                            <select id="ai-task" class="w-full text-xs font-bold bg-white/10 border border-white/20 text-white rounded-xl p-3 outline-none focus:bg-white focus:text-indigo-900 transition-all shadow-inner">
-                                <option value="policy" class="text-indigo-900 font-bold">📖 Hỏi về Nội quy & Lương</option>
-                                <option value="upsell" class="text-indigo-900 font-bold">🍻 Cách mời khách uống thêm bia</option>
-                                <option value="complaint" class="text-indigo-900 font-bold">🎭 Xử lý phàn nàn của khách</option>
-                            </select>
-                            <textarea id="ai-input" rows="2" class="w-full text-xs bg-white/10 border border-white/20 text-white rounded-xl p-3 outline-none placeholder-indigo-200 focus:bg-white focus:text-indigo-900 transition-all shadow-inner" placeholder="Ví dụ: Em đi trễ 5 lần thì lương tính ntn?"></textarea>
-                            <button onclick="askLocalAI()" class="w-full bg-white text-indigo-600 font-black py-3 rounded-xl shadow-lg flex justify-center items-center transition-all active:scale-95">
+                        <h3 class="font-black mb-1 flex items-center uppercase text-sm tracking-wider">Trợ Lý AI Sake <span class="ml-2 text-xs animate-sparkle">✨</span></h3>
+                        <p class="text-[10px] text-indigo-100 mb-5 font-bold tracking-widest uppercase">Hỗ trợ riêng cho Runner</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-extrabold uppercase text-indigo-200 tracking-wider mb-1">Chủ đề hỗ trợ</label>
+                                <select id="ai-task" class="w-full text-xs font-bold bg-white/10 border border-white/15 text-white rounded-xl p-3.5 outline-none focus:bg-white focus:text-indigo-900 transition-all shadow-inner">
+                                    <option value="policy" class="text-indigo-900 font-bold">📖 Hỏi về Nội quy & Lương</option>
+                                    <option value="upsell" class="text-indigo-900 font-bold">🍻 Cách mời khách uống thêm bia</option>
+                                    <option value="complaint" class="text-indigo-900 font-bold">🎭 Xử lý phàn nàn của khách</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-extrabold uppercase text-indigo-200 tracking-wider mb-1">Nhập câu hỏi hoặc tình huống</label>
+                                <textarea id="ai-input" rows="2" class="w-full text-xs bg-white/10 border border-white/15 text-white rounded-xl p-3.5 outline-none placeholder-indigo-200 focus:bg-white focus:text-indigo-900 transition-all shadow-inner leading-relaxed" placeholder="Ví dụ: Em đi trễ 5 lần thì lương tính ntn?"></textarea>
+                            </div>
+                            <button onclick="askLocalAI()" class="w-full bg-white text-indigo-600 font-black py-4 rounded-2xl shadow-xl flex justify-center items-center transition-all active:scale-95 text-xs uppercase tracking-wider">
                                 <span id="ai-btn-text">Gửi Câu Hỏi</span>
                                 <span id="ai-loading" class="loader hidden ml-2 !border-t-indigo-600 !border-indigo-100"></span>
                             </button>
                             <div id="ai-response-box" class="hidden mt-4 bg-white/10 rounded-2xl p-4 border border-white/10 backdrop-blur-sm shadow-inner overflow-y-auto max-h-60">
-                                <p class="text-[9px] font-black uppercase mb-1 flex items-center"><i class="fa-solid fa-comment-dots mr-1"></i> Trợ lý Sake trả lời:</p>
+                                <p class="text-[9px] font-black uppercase mb-1.5 flex items-center tracking-wider text-indigo-200"><i class="fa-solid fa-comment-dots mr-1.5 text-xs"></i> Trợ lý Sake trả lời:</p>
                                 <div id="ai-result-text" class="text-[11px] leading-relaxed italic text-white font-medium"></div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <footer class="pt-8 pb-4 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest opacity-60">
+                <footer class="pt-8 pb-4 text-center text-[10px] text-slate-400 font-extrabold uppercase tracking-widest opacity-60">
                     <p>Phê duyệt bởi Ban Quản lý Cây Sake</p>
                 </footer>
             </main>
@@ -335,7 +490,7 @@
                 },
                 {
                     keywords: ["lương", "tổng", "thu nhập", "bao nhiêu"],
-                    answer: "Tổng thu nhập tối đa của em là <b>6.100.000đ</b>. Trong đó: Lương cơ bản 4.500.000đ và tổng KPI tối đa 1.600.000đ. Ngoài ra em còn được nhận thêm một phần tiền Tip từ bộ phận Phục vụ."
+                    answer: "Tổng thu nhập tối đa hiện tại của em sau khi được điều chỉnh tăng là <b>6.500.000đ</b>. Trong đó: Lương cơ bản mới là 4.900.000đ và tổng KPI tối đa 1.600.000đ. Ngoài ra em còn nhận tiền Tip từ bộ phận Phục vụ."
                 },
                 {
                     keywords: ["kpi", "tính sao", "thang điểm"],
@@ -363,7 +518,7 @@
             }
 
             if (!foundAnswer) {
-                foundAnswer = "Trợ lý chưa tìm thấy chi tiết cho câu hỏi này. Em vui lòng kiểm tra lại ở các mục <b>JD</b> hoặc <b>KPI</b> phía trên, hoặc hỏi trực tiếp <b>Giám sát ca</b> để được hỗ trợ nhé!";
+                foundAnswer = "Trợ lý chưa tìm thấy chi tiết cho câu hỏi này. Em vui lòng kiểm tra lại ở các mục <b>I</b> hoặc <b>V</b> phía trên, hoặc hỏi trực tiếp <b>Giám sát ca</b> để được hỗ trợ nhé!";
             }
 
             responseText.innerHTML = foundAnswer;
