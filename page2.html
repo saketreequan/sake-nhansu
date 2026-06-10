@@ -9,20 +9,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .app-container { max-width: 480px; margin: 0 auto; background-color: #ffffff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .app-container { max-width: 480px; margin: 0 auto; background-color: #f8fafc; min-height: 100vh; box-shadow: 0 10px 40px rgba(0,0,0,0.08); overflow-x: hidden; }
         .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .accordion-content.active { max-height: 800px; transition: max-height 0.3s ease-in; }
         .rotate-180 { transform: rotate(180deg); }
         
+        /* Hiệu ứng mượt mà */
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        
         /* Hiệu ứng cho AI */
         @keyframes sparkle { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
         .animate-sparkle { animation: sparkle 1.5s infinite; }
-        /* Loader màu tím cho nút AI màu trắng */
         .loader { border: 3px solid rgba(107, 97, 245, 0.2); border-radius: 50%; border-top: 3px solid #6B61F5; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 selection:bg-orange-200">
 
     <!-- Container gốc để Javascript tự động "vẽ" ứng dụng vào đây -->
     <div id="app-root" class="app-container relative pb-10"></div>
@@ -38,9 +40,9 @@
             updateDate: new Date().toLocaleDateString('vi-VN')
         },
         salary: {
-            base: "2.100.000",
+            base: "2.650.000",
             kpiMax: "850.000",
-            total: "2.950.000",
+            total: "3.500.000",
             tipPolicy: "Tip nhân viên tự nhận theo quy định hiện hành và trích một phần cho bộ phận tiếp thực."
         },
         workHours: {
@@ -173,7 +175,7 @@
             // Chuỗi dữ liệu tóm tắt được nạp thẳng vào bộ nhớ Gemini
             policyContext: `
                 THÔNG TIN VỀ CHÍNH SÁCH LƯƠNG & KPI CỦA NHÀ HÀNG (VỊ TRÍ PART-TIME):
-                1. Lương cơ bản 2.100.000đ. KPI tối đa 850.000đ. Tổng tối đa 2.950.000đ. Tip tự nhận và trích cho tiếp thực.
+                1. Lương cơ bản 2.650.000đ. KPI tối đa 850.000đ. Tổng tối đa 3.500.000đ. Tip tự nhận và trích cho tiếp thực.
                 2. Làm việc ca cố định (17h00-22h00, không nghỉ giữa ca). Bắt buộc có mặt giờ cao điểm (18h-22h).
                 3. Quy định KPI:
                 - Chuyên cần (150k): Nghỉ quá 2 ngày hoặc 1 ngày không phép -> Trừ 100%.
@@ -201,79 +203,106 @@
         const root = document.getElementById('app-root');
         
         let html = `
-            <!-- Header -->
-            <header class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 pb-20 rounded-b-[40px] shadow-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <div><span class="bg-white/20 text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wider">${JOB_DATA.meta.version}</span></div>
-                    <i class="fa-solid fa-bell text-xl animate-pulse"></i>
+            <!-- Header (Thiết kế lại mượt mà hơn) -->
+            <header class="bg-gradient-to-br from-orange-400 via-orange-500 to-red-500 text-white p-6 pb-24 rounded-b-[48px] shadow-xl relative overflow-hidden">
+                <!-- Background pattern nhẹ -->
+                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-orange-300 opacity-20 rounded-full blur-xl"></div>
+
+                <div class="relative z-10 flex justify-between items-center mb-5">
+                    <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest border border-white/20 shadow-sm">${JOB_DATA.meta.version}</span>
+                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/10 shadow-sm">
+                        <i class="fa-solid fa-bell text-sm animate-pulse"></i>
+                    </div>
                 </div>
-                <h1 class="text-3xl font-extrabold mb-1 mt-2 tracking-tight">Cẩm Nang Công Việc</h1>
-                <p class="text-white text-sm font-medium"><i class="fa-solid fa-user-tie mr-1"></i> Vị trí: ${JOB_DATA.meta.roleName}</p>
+                <h1 class="relative z-10 text-[28px] font-black mb-1 mt-2 tracking-tight drop-shadow-sm">Cẩm Nang Công Việc</h1>
+                <p class="relative z-10 text-white/95 text-sm font-medium tracking-wide"><i class="fa-solid fa-user-tie mr-1 opacity-80"></i> Vị trí: ${JOB_DATA.meta.roleName}</p>
             </header>
 
-            <main class="px-5 -mt-16 relative z-10 space-y-6">
+            <main class="px-5 -mt-20 relative z-20 space-y-6">
                 
-                <!-- Focus Card: Tổng Thu Nhập (Ngay dưới Header) -->
-                <div class="bg-white rounded-[32px] shadow-lg p-6 border-2 border-green-500 mb-6 relative overflow-hidden">
-                    <div class="absolute -right-8 -bottom-8 opacity-[0.03] text-9xl text-green-600 z-0"><i class="fa-solid fa-coins"></i></div>
+                <!-- Focus Card: Tổng Thu Nhập (Redesigned Wallet Card) -->
+                <div class="glass-card rounded-[32px] p-6 border border-emerald-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] mb-6 relative overflow-hidden">
+                    <!-- Icon mờ nền mới -->
+                    <div class="absolute -right-6 -bottom-6 opacity-[0.025] text-9xl text-emerald-600 z-0 transform rotate-[-15deg]"><i class="fa-solid fa-wallet"></i></div>
                     
                     <div class="relative z-10">
-                        <p class="text-center text-slate-500 font-bold mb-1 text-[11px] tracking-widest uppercase">Tổng thu nhập tối đa</p>
-                        <h2 class="text-center text-[42px] leading-tight font-extrabold text-green-600 mb-6">${JOB_DATA.salary.total}<span class="text-2xl font-bold ml-1">đ</span></h2>
+                        <div class="flex items-center justify-center space-x-2 mb-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <p class="text-slate-400 font-bold text-[10px] tracking-[0.2em] uppercase">Tổng thu nhập tối đa</p>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        </div>
                         
-                        <div class="grid grid-cols-2 gap-3 mb-5">
-                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-start justify-center">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lương cơ bản</span>
-                                <span class="text-lg font-extrabold text-slate-800">${JOB_DATA.salary.base}đ</span>
+                        <h2 class="text-center text-[44px] leading-none font-black text-emerald-600 mb-6 drop-shadow-sm">
+                            ${JOB_DATA.salary.total}<span class="text-2xl font-bold ml-1 text-emerald-500">đ</span>
+                        </h2>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-5">
+                            <!-- Lương cơ bản -->
+                            <div class="bg-slate-50/80 p-4 rounded-[20px] border border-slate-100 flex flex-col items-center justify-center shadow-sm">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center"><i class="fa-solid fa-sack-dollar text-slate-300 mr-1.5"></i>Lương cơ bản</span>
+                                <span class="text-[17px] font-extrabold text-slate-700">${JOB_DATA.salary.base}đ</span>
                             </div>
                             
-                            <div class="bg-green-50/50 p-4 rounded-2xl border border-green-100 flex flex-col items-start justify-center">
-                                <span class="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">Thưởng KPI</span>
-                                <span class="text-lg font-extrabold text-green-600">+${JOB_DATA.salary.kpiMax}đ</span>
+                            <!-- Thưởng KPI -->
+                            <div class="bg-emerald-50/80 p-4 rounded-[20px] border border-emerald-100 flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-200 opacity-20 rounded-full blur-xl"></div>
+                                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1.5 flex items-center relative z-10"><i class="fa-solid fa-star text-emerald-400 mr-1.5"></i>Thưởng KPI</span>
+                                <span class="text-[17px] font-extrabold text-emerald-600 relative z-10">+${JOB_DATA.salary.kpiMax}đ</span>
                             </div>
                         </div>
                         
-                        <div class="text-center border-t border-slate-100 pt-4">
-                            <p class="text-[11px] text-slate-400 font-medium italic underline decoration-slate-300 underline-offset-4 decoration-dotted">${JOB_DATA.salary.tipPolicy}</p>
+                        <!-- Note Tip -->
+                        <div class="text-center pt-4 relative">
+                            <div class="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+                            <p class="text-[11px] text-slate-400 font-medium italic"><i class="fa-solid fa-circle-info mr-1 text-slate-300"></i> ${JOB_DATA.salary.tipPolicy}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- I. Thời Gian Làm Việc -->
-                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
-                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-regular fa-clock text-blue-500 mr-2"></i> I. Thời Gian Làm Việc</h3>
-                    <ul class="text-sm text-slate-600 space-y-2">
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100">
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mr-3"><i class="fa-regular fa-clock"></i></div> I. Thời Gian Làm Việc</h3>
+                    <ul class="text-sm text-slate-600 space-y-3 pl-11">
                         ${JOB_DATA.workHours.shifts.map(shift => `
-                            <li><span class="font-semibold text-slate-700">${shift.name}:</span> ${shift.time} <br><span class="text-xs italic text-slate-500">${shift.note}</span></li>
+                            <li class="relative">
+                                <div class="absolute -left-5 top-1.5 w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                <span class="font-semibold text-slate-700">${shift.name}:</span> ${shift.time} <br><span class="text-xs italic text-slate-400 mt-1 inline-block">${shift.note}</span>
+                            </li>
                         `).join('')}
                     </ul>
-                    <div class="mt-3 bg-red-50 border border-red-200 p-3 rounded-lg text-xs text-slate-800">
-                        <strong class="text-red-600">Khung giờ cao điểm (Bắt buộc có mặt):</strong> ${JOB_DATA.workHours.peakHours}. <br>${JOB_DATA.workHours.peakNote}
+                    <div class="mt-4 bg-rose-50/80 border border-rose-100 p-3.5 rounded-xl text-xs text-slate-700 flex items-start">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500 mt-0.5 mr-2"></i>
+                        <div>
+                            <strong class="text-rose-600 font-semibold uppercase tracking-wide text-[10px]">Giờ cao điểm (Bắt buộc có mặt):</strong> 
+                            <div class="font-bold text-sm text-slate-800 mt-0.5">${JOB_DATA.workHours.peakHours}</div>
+                            <div class="mt-1 opacity-80 leading-relaxed">${JOB_DATA.workHours.peakNote}</div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- II. Mục Tiêu -->
-                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
-                    <h3 class="font-bold text-lg mb-2 text-slate-800 flex items-center"><i class="fa-solid fa-crosshairs text-blue-500 mr-2"></i> II. Mục Tiêu Vị Trí</h3>
-                    <p class="text-sm text-slate-600 leading-relaxed text-justify">
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100">
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center mr-3"><i class="fa-solid fa-crosshairs"></i></div> II. Mục Tiêu Vị Trí</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed text-justify pl-11">
                         ${JOB_DATA.objective.desc}<br><br>
-                        <strong>Mục tiêu:</strong> ${JOB_DATA.objective.goal}
+                        <strong class="text-slate-700">Mục tiêu:</strong> ${JOB_DATA.objective.goal}
                     </p>
                 </div>
 
                 <!-- III. Mô Tả Công Việc -->
                 <div>
-                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> III. Mô Tả Công Việc Chi Tiết</h3>
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 flex items-center"><div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mr-3"><i class="fa-solid fa-list-check"></i></div> III. Mô Tả Công Việc</h3>
                     <div class="space-y-3 accordion-group">
                         ${JOB_DATA.jobDescriptions.map(jd => `
-                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50">
+                            <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50/50 transition-colors">
                                     <div class="font-bold text-slate-700 text-sm text-left">${jd.title}</div>
-                                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                                    <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center"><i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i></div>
                                 </button>
-                                <div class="accordion-content bg-slate-50 border-t border-slate-100">
+                                <div class="accordion-content bg-slate-50/50 border-t border-slate-50">
                                     <div class="p-4 text-sm text-slate-600 space-y-3">
-                                        ${jd.items.map(item => `<p>👉 ${item}</p>`).join('')}
+                                        ${jd.items.map(item => `<p class="flex items-start"><span class="text-emerald-400 mr-2 mt-0.5">👉</span> <span>${item}</span></p>`).join('')}
                                     </div>
                                 </div>
                             </div>
@@ -283,21 +312,27 @@
 
                 <!-- IV. Lương & KPI -->
                 <div>
-                    <h3 class="font-bold text-lg mb-3 flex items-center text-slate-800"><i class="fa-solid fa-bullseye text-red-500 mr-2"></i> IV. Bảng Tiêu Chí KPI</h3>
-                    <p class="text-xs text-slate-500 mb-4 italic">Bấm vào từng mục để xem chi tiết.</p>
+                    <h3 class="font-bold text-lg mb-1 flex items-center text-slate-800"><div class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center mr-3"><i class="fa-solid fa-bullseye"></i></div> IV. Bảng Tiêu Chí KPI</h3>
+                    <p class="text-xs text-slate-500 mb-4 italic pl-11">Bấm vào từng mục để xem chi tiết.</p>
 
-                    <div class="space-y-3 mb-6 accordion-group">
+                    <div class="space-y-3 mb-8 accordion-group">
                         ${JOB_DATA.kpis.map(kpi => `
-                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50">
-                                    <div class="flex items-center"><span class="text-xl mr-3">${kpi.icon}</span><div class="text-left"><div class="font-bold text-slate-700 text-sm">${kpi.title}</div><div class="text-green-600 font-semibold text-xs">${kpi.reward}</div></div></div>
-                                    <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                            <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 focus:outline-none hover:bg-slate-50/50 transition-colors">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-lg mr-3 shadow-inner">${kpi.icon}</div>
+                                        <div class="text-left">
+                                            <div class="font-bold text-slate-700 text-sm">${kpi.title}</div>
+                                            <div class="text-emerald-500 font-bold text-xs mt-0.5">${kpi.reward}</div>
+                                        </div>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center"><i class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i></div>
                                 </button>
-                                <div class="accordion-content bg-slate-50 border-t border-slate-100">
-                                    <div class="p-4 text-sm text-slate-600 space-y-2">
-                                        ${kpi.positives.map(p => `<p><i class="fa-solid fa-check text-green-500 mr-1"></i> ${p}</p>`).join('')}
-                                        ${kpi.negatives.length > 0 ? `<p class="font-semibold mt-2 mb-1 text-red-600 text-xs uppercase">Các lỗi vi phạm (Tiêu cực):</p><ul class="list-disc pl-4 space-y-1 text-xs">${kpi.negatives.map(n => `<li>${n}</li>`).join('')}</ul>` : ''}
-                                        ${kpi.alert ? `<div class="bg-red-50 text-red-600 p-2 rounded text-xs mt-2 border border-red-200">${kpi.alert}</div>` : ''}
+                                <div class="accordion-content bg-slate-50/50 border-t border-slate-50">
+                                    <div class="p-4 text-sm text-slate-600 space-y-2.5">
+                                        ${kpi.positives.map(p => `<p class="flex items-start"><i class="fa-solid fa-circle-check text-emerald-400 mt-1 mr-2 text-xs"></i> <span>${p}</span></p>`).join('')}
+                                        ${kpi.negatives.length > 0 ? `<div class="mt-4"><p class="font-bold mb-2 text-rose-500 text-[10px] uppercase tracking-wider">Các lỗi vi phạm (Tiêu cực):</p><ul class="space-y-1.5 text-xs bg-white p-3 rounded-xl border border-slate-100">${kpi.negatives.map(n => `<li class="flex items-start"><i class="fa-solid fa-xmark text-rose-400 mt-0.5 mr-2"></i> <span class="leading-relaxed">${n}</span></li>`).join('')}</ul></div>` : ''}
+                                        ${kpi.alert ? `<div class="bg-rose-50 text-rose-600 p-3 rounded-xl text-xs mt-3 border border-rose-100 flex items-start"><i class="fa-solid fa-circle-exclamation mt-0.5 mr-2"></i> <span>${kpi.alert}</span></div>` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -306,16 +341,19 @@
 
                     <!-- Thang điểm trừ KPI chung -->
                     <div class="mb-8">
-                        <h4 class="font-bold text-sm text-slate-700 mb-1">Thang Điểm Trừ (Áp dụng ĐỘC LẬP cho từng mục)</h4>
-                        <p class="text-xs text-slate-500 mb-3 leading-relaxed">Lỗi của mục nào tính riêng mục đó, không cộng dồn. <br><em class="text-indigo-600">Ví dụ: Tháng này bạn vi phạm 4 lỗi Kỷ luật (nhận 70% thưởng), nhưng chỉ vi phạm 2 lỗi Phục vụ (nhận 90% thưởng).</em></p>
-                        <div class="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                        <div class="flex items-center mb-2">
+                            <div class="w-1 h-4 bg-indigo-500 rounded-full mr-2"></div>
+                            <h4 class="font-bold text-sm text-slate-700">Thang Điểm Trừ (Áp dụng ĐỘC LẬP cho từng mục)</h4>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3 leading-relaxed">Lỗi của mục nào tính riêng mục đó, không cộng dồn. <br><em class="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded inline-block mt-1">VD: Tháng này vi phạm 4 lỗi Kỷ luật (nhận 70% thưởng), chỉ vi phạm 2 lỗi Phục vụ (nhận 90% thưởng).</em></p>
+                        <div class="overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
                             <table class="w-full text-xs text-center bg-white">
-                                <thead class="bg-slate-100 text-slate-700"><tr><th class="py-2 px-1 border-b border-r border-slate-200">Số lỗi phát hiện</th><th class="py-2 px-1 border-b border-slate-200">Mức nhận KPI</th></tr></thead>
+                                <thead class="bg-slate-50 text-slate-600 font-semibold uppercase tracking-wider text-[10px]"><tr><th class="py-3 px-1 border-b border-r border-slate-100">Số lỗi phát hiện</th><th class="py-3 px-1 border-b border-slate-100">Mức nhận KPI</th></tr></thead>
                                 <tbody class="text-slate-600">
                                     ${JOB_DATA.kpiScale.map(scale => `
-                                        <tr>
-                                            <td class="py-1.5 border-r border-b border-slate-100 ${scale.isDanger ? 'text-red-600 font-medium' : ''}">${scale.error}</td>
-                                            <td class="py-1.5 border-b border-slate-100 font-bold ${scale.isPositive ? 'text-green-600' : (scale.isWarning ? 'text-orange-500' : (scale.isDanger ? 'text-red-600' : 'text-slate-700'))}">${scale.percent}</td>
+                                        <tr class="transition-colors hover:bg-slate-50/50">
+                                            <td class="py-2.5 border-r border-b border-slate-50 ${scale.isDanger ? 'text-rose-500 font-semibold' : ''}">${scale.error}</td>
+                                            <td class="py-2.5 border-b border-slate-50 font-bold ${scale.isPositive ? 'text-emerald-500' : (scale.isWarning ? 'text-orange-500' : (scale.isDanger ? 'text-rose-500' : 'text-slate-700'))}">${scale.percent}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -323,21 +361,21 @@
                         </div>
                     </div>
 
-                    <!-- Thử Thách Upsell (Ẩn nếu hasChallenge = false) -->
+                    <!-- Thử Thách Upsell -->
                     ${JOB_DATA.challenge.hasChallenge ? `
-                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 shadow-sm mb-6 relative overflow-hidden">
-                        <div class="absolute -right-4 -top-4 opacity-10 text-6xl text-slate-400"><i class="fa-solid ${JOB_DATA.challenge.icon}"></i></div>
-                        <h3 class="font-bold text-lg mb-1 flex items-center text-slate-800 relative z-10"><i class="fa-solid ${JOB_DATA.challenge.icon} text-yellow-500 mr-2"></i> ${JOB_DATA.challenge.title}</h3>
-                        <p class="text-xs text-slate-600 mb-4 relative z-10">Nhận tối đa <strong class="text-green-600">${JOB_DATA.challenge.reward}</strong> ${JOB_DATA.challenge.desc}</p>
-                        <div class="relative pt-1 pb-4 z-10">
-                            <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1 px-1">
-                                ${JOB_DATA.challenge.milestones.map(m => `<span class="${m.isRed ? 'text-red-500' : (m.isGreen ? 'text-green-600' : '')}">${m.label}</span>`).join('')}
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-100/50 shadow-sm mb-6 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-[0.07] text-7xl text-orange-500"><i class="fa-solid ${JOB_DATA.challenge.icon}"></i></div>
+                        <h3 class="font-bold text-lg mb-1 flex items-center text-slate-800 relative z-10"><i class="fa-solid ${JOB_DATA.challenge.icon} text-amber-500 mr-2 drop-shadow-sm"></i> ${JOB_DATA.challenge.title}</h3>
+                        <p class="text-xs text-slate-600 mb-5 relative z-10">Nhận tối đa <strong class="text-emerald-600 text-sm mx-0.5">${JOB_DATA.challenge.reward}</strong> ${JOB_DATA.challenge.desc}</p>
+                        <div class="relative pt-1 pb-2 z-10">
+                            <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-1.5 px-1">
+                                ${JOB_DATA.challenge.milestones.map(m => `<span class="${m.isRed ? 'text-rose-500' : (m.isGreen ? 'text-emerald-600' : '')}">${m.label}</span>`).join('')}
                             </div>
-                            <div class="overflow-hidden h-3 mb-2 text-xs flex rounded-full bg-slate-200 border border-slate-200">
-                                <div style="width: 100%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-red-500 via-yellow-400 to-green-500"></div>
+                            <div class="overflow-hidden h-3.5 mb-2.5 text-xs flex rounded-full bg-white border border-slate-100 shadow-inner">
+                                <div style="width: 100%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400"></div>
                             </div>
                             <div class="flex justify-between text-[10px] font-bold text-slate-600 px-1">
-                                ${JOB_DATA.challenge.rewards.map(r => `<span class="${r.isRed ? 'text-red-500' : (r.isGreen ? 'text-green-600 font-bold' : '')}">${r.label}</span>`).join('')}
+                                ${JOB_DATA.challenge.rewards.map(r => `<span class="${r.isRed ? 'text-rose-500' : (r.isGreen ? 'text-emerald-600 font-black' : '')}">${r.label}</span>`).join('')}
                             </div>
                         </div>
                     </div>
@@ -345,69 +383,77 @@
                 </div>
 
                 <!-- V. Nguyên Tắc -->
-                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
-                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center"><i class="fa-solid fa-scale-balanced text-red-500 mr-2"></i> V. Nguyên Tắc Ghi Nhận Lỗi</h3>
-                    <ul class="text-sm text-slate-600 space-y-2 list-decimal pl-4">
-                        ${JOB_DATA.rules.map(rule => `<li>${rule}</li>`).join('')}
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800 flex items-center"><div class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mr-3"><i class="fa-solid fa-scale-balanced"></i></div> V. Nguyên Tắc Ghi Nhận</h3>
+                    <ul class="text-sm text-slate-600 space-y-3">
+                        ${JOB_DATA.rules.map((rule, idx) => `
+                            <li class="flex items-start">
+                                <span class="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-bold mr-2.5 mt-0.5">${idx + 1}</span>
+                                <span class="leading-relaxed">${rule}</span>
+                            </li>
+                        `).join('')}
                     </ul>
                 </div>
 
                 <!-- VI. Thâm Niên -->
-                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 border-l-4 border-l-green-500 flex items-start">
-                    <div class="text-green-500 text-2xl mr-3 mt-1"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                <div class="bg-emerald-50/50 rounded-2xl shadow-sm p-5 border border-emerald-100 flex items-start">
+                    <div class="text-emerald-500 text-2xl mr-4 mt-1 drop-shadow-sm"><i class="fa-solid fa-arrow-trend-up"></i></div>
                     <div>
-                        <h4 class="font-bold text-slate-800 mb-1">VI. Chính Sách Thâm Niên</h4>
+                        <h4 class="font-bold text-slate-800 mb-1.5 text-lg">VI. Chính Sách Thâm Niên</h4>
                         <p class="text-xs text-slate-600 leading-relaxed">
-                            Tăng lương cơ bản <strong class="text-green-600">${JOB_DATA.seniority.reward}</strong> (${JOB_DATA.seniority.max}) khi đạt điều kiện: <br>
-                            ${JOB_DATA.seniority.conditions.map(c => `• ${c}<br>`).join('')}
+                            Tăng lương cơ bản <strong class="text-emerald-600 text-sm mx-0.5">${JOB_DATA.seniority.reward}</strong> <span class="text-slate-400">(${JOB_DATA.seniority.max})</span> khi đạt:<br>
+                            <div class="mt-2 space-y-1.5 pl-1 border-l-2 border-emerald-200">
+                                ${JOB_DATA.seniority.conditions.map(c => `<div class="text-xs text-slate-600 pl-2 relative before:content-[''] before:absolute before:left-[-5px] before:top-1.5 before:w-2 before:h-2 before:bg-white before:border-2 before:border-emerald-300 before:rounded-full">${c}</div>`).join('')}
+                            </div>
                         </p>
                     </div>
                 </div>
 
                 <!-- KHU VỰC TRỢ LÝ AI (PURPLE THEME) -->
-                <div class="bg-[#6B61F5] rounded-2xl p-5 shadow-lg relative overflow-hidden mt-8">
-                    <!-- Icon robot chìm dưới nền -->
-                    <div class="absolute -right-6 -bottom-6 opacity-10 text-8xl text-white"><i class="fa-solid fa-robot"></i></div>
+                <div class="bg-gradient-to-br from-[#6B61F5] to-[#4F46D6] rounded-[28px] p-6 shadow-xl relative overflow-hidden mt-8">
+                    <!-- Decor chìm -->
+                    <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl text-white transform rotate-12"><i class="fa-solid fa-robot"></i></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl"></div>
                     
-                    <h3 class="font-bold text-lg mb-1 flex items-center text-white relative z-10">
-                        Trợ Lý AI Nội Bộ <span class="ml-2 text-sm animate-sparkle">✨</span>
+                    <h3 class="font-black text-xl mb-1 flex items-center text-white relative z-10 drop-shadow-md">
+                        Trợ Lý AI Nội Bộ <span class="ml-2 text-lg animate-sparkle">✨</span>
                     </h3>
-                    <p class="text-xs font-semibold text-white/80 uppercase tracking-wider mb-4 relative z-10">Hỏi ngay AI để giải đáp thắc mắc về Nội quy, bị trừ tiền hay cách xử lý tình huống!</p>
+                    <p class="text-[11px] font-bold text-indigo-100 uppercase tracking-widest mb-5 relative z-10">Hỏi ngay để giải đáp thắc mắc lương, thưởng & xử lý tình huống!</p>
 
-                    <div class="space-y-3 relative z-10">
+                    <div class="space-y-4 relative z-10">
                         <!-- Select Dropdown -->
                         <div class="relative">
-                            <select id="ai-task-type" class="w-full text-sm font-medium bg-[#5A50E5] border border-white/30 text-white rounded-lg p-3 outline-none shadow-sm focus:border-white/50 appearance-none pr-10 cursor-pointer">
-                                ${JOB_DATA.aiConfig.taskOptions.map(opt => `<option value="${opt.id}" class="text-slate-800 bg-white">${opt.label}</option>`).join('')}
+                            <select id="ai-task-type" class="w-full text-sm font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl p-3.5 outline-none shadow-sm focus:border-white/50 appearance-none pr-10 cursor-pointer transition-colors hover:bg-white/20">
+                                ${JOB_DATA.aiConfig.taskOptions.map(opt => `<option value="${opt.id}" class="text-slate-800 bg-white font-medium">${opt.label}</option>`).join('')}
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white opacity-80"><i class="fa-solid fa-chevron-down text-xs"></i></div>
                         </div>
                         
                         <!-- Textarea -->
-                        <textarea id="ai-input" rows="2" class="w-full text-sm bg-[#5A50E5] bg-opacity-50 border border-white/30 text-white rounded-lg p-3 outline-none placeholder-white/60 focus:border-white/50 shadow-inner" placeholder="${JOB_DATA.aiConfig.taskOptions[0].placeholder}"></textarea>
+                        <textarea id="ai-input" rows="2" class="w-full text-sm bg-black/10 border border-white/10 text-white rounded-xl p-3.5 outline-none placeholder-indigo-200/60 focus:border-white/40 shadow-inner transition-colors focus:bg-black/20" placeholder="${JOB_DATA.aiConfig.taskOptions[0].placeholder}"></textarea>
                         
                         <!-- Lỗi -->
-                        <div id="ai-error" class="hidden text-xs text-red-200 font-medium">Vui lòng nhập câu hỏi để AI giải đáp nhé!</div>
+                        <div id="ai-error" class="hidden text-[11px] text-rose-200 font-semibold bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/30">Vui lòng nhập câu hỏi để AI giải đáp nhé!</div>
                         
                         <!-- Nút gửi -->
-                        <button onclick="askGemini()" class="w-full bg-white hover:bg-gray-50 text-[#6B61F5] font-bold py-3 px-4 rounded-xl text-sm transition-colors shadow-md flex justify-center items-center">
-                            <span id="ai-btn-text">Gửi câu hỏi cho AI ✨</span>
+                        <button onclick="askGemini()" class="w-full bg-white hover:bg-indigo-50 text-[#5A50E5] font-extrabold py-3.5 px-4 rounded-xl text-sm transition-transform active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.15)] flex justify-center items-center">
+                            <span id="ai-btn-text">Gửi câu hỏi cho AI</span>
                             <span id="ai-loading" class="loader hidden ml-2"></span>
                         </button>
                         
                         <!-- Kết quả -->
-                        <div id="ai-result-container" class="hidden mt-3">
-                            <div class="bg-white/10 border border-white/20 rounded-xl p-4 relative backdrop-blur-sm">
-                                <div class="text-[10px] text-white font-bold uppercase mb-2 tracking-wider">AI TRẢ LỜI:</div>
-                                <div id="ai-result-text" class="text-sm text-white leading-relaxed italic"></div>
+                        <div id="ai-result-container" class="hidden mt-4">
+                            <div class="bg-white/10 border border-white/20 rounded-2xl p-5 relative backdrop-blur-md shadow-inner">
+                                <div class="inline-block bg-[#4F46D6] text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md mb-3 shadow-sm border border-white/10">AI Trả Lời:</div>
+                                <div id="ai-result-text" class="text-sm text-indigo-50 leading-relaxed"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 pb-2 text-center text-xs text-slate-400 border-t border-slate-200 mt-8">
+                <div class="pt-6 pb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-300 border-t border-slate-100 mt-8">
                     <p>Phê duyệt bởi Ban Quản lý Nhà hàng</p>
-                    <p class="mt-1">Cập nhật lúc: ${JOB_DATA.meta.updateDate}</p>
+                    <p class="mt-1 opacity-70">Cập nhật lúc: ${JOB_DATA.meta.updateDate}</p>
                 </div>
             </main>
         `;
@@ -448,7 +494,7 @@
     /* ======================================================================
        LOGIC KẾT NỐI GEMINI API
        ====================================================================== */
-    const apiKey = "AIzaSyDQpJY_QRxT_OdKlzTsg9YCVpSHFSGTtuY"; 
+    const apiKey = ""; 
 
     const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     async function fetchWithRetry(url, options, maxRetries = 5) {
@@ -477,11 +523,11 @@
         const userQuery = inputField.value.trim();
         if (!userQuery) {
             errorMsg.classList.remove('hidden');
-            inputField.classList.add('border-red-400');
+            inputField.classList.add('border-rose-400');
             return;
         } else {
             errorMsg.classList.add('hidden');
-            inputField.classList.remove('border-red-400');
+            inputField.classList.remove('border-rose-400');
         }
 
         btnText.textContent = "Đang suy nghĩ...";
@@ -508,7 +554,7 @@
             let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
             if (responseText) {
                 // Tự động tô đậm bằng chữ trắng trong khung tím
-                responseText = responseText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white bg-white/20 px-1 rounded">$1</strong>').replace(/\n/g, '<br>');
+                responseText = responseText.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold bg-white/20 px-1.5 py-0.5 rounded">$1</strong>').replace(/\n/g, '<br><br>');
                 resultText.innerHTML = responseText;
                 resultContainer.classList.remove('hidden');
             } else {
@@ -516,10 +562,10 @@
                 resultContainer.classList.remove('hidden');
             }
         } catch (error) {
-            resultText.innerHTML = "<span class='text-red-200'>Lỗi kết nối. Hãy kiểm tra API Key hoặc thử lại sau nhé!</span>";
+            resultText.innerHTML = "<span class='text-rose-200'>Lỗi kết nối. Hãy kiểm tra API Key hoặc thử lại sau nhé!</span>";
             resultContainer.classList.remove('hidden');
         } finally {
-            btnText.textContent = "Gửi câu hỏi cho AI ✨";
+            btnText.textContent = "Gửi câu hỏi cho AI";
             loadingIndicator.classList.add('hidden');
         }
     }
