@@ -681,6 +681,26 @@
         };
     }
 
+    // Hàm format thời gian theo chuẩn: Thứ X - DD/MM/YYYY - HH:MM:SS
+    function formatLogTime(rawTime) {
+        if (!rawTime) return 'N/A';
+        const d = new Date(rawTime);
+        if (isNaN(d.getTime())) return String(rawTime); // Fallback nếu định dạng không phải ngày tháng
+
+        const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+        const dayOfWeek = days[d.getDay()];
+        
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        
+        const hh = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const ss = String(d.getSeconds()).padStart(2, '0');
+
+        return `${dayOfWeek} - ${dd}/${mm}/${yyyy} - ${hh}:${min}:${ss}`;
+    }
+
     // --- 4. GLOBAL STATE & LINK GOOGLE SHEETS ---
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl66O1nJmEs_6kBKoAxsjughNhy-NcL4m9rvu9v0ksldUJX_3woStWUqzyBFb0LqfI/exec"; 
 
@@ -899,7 +919,7 @@
                 
                 let vals = Object.values(log);
                 let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
-                if (typeof timeStr !== 'string') timeStr = 'N/A';
+                timeStr = formatLogTime(timeStr); // Format lại ngày giờ
                 
                 logsContainer.innerHTML += `
                     <div class="p-3 bg-slate-50/80 rounded-xl border border-slate-100 text-xs flex flex-col gap-1.5">
@@ -1290,7 +1310,7 @@
                 
                 let vals = Object.values(log);
                 let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
-                if (typeof timeStr !== 'string') timeStr = 'N/A';
+                timeStr = formatLogTime(timeStr); // Format lại ngày giờ
                 
                 logsList.innerHTML += `
                     <div class="flex items-start p-3 bg-slate-50/60 rounded-xl border border-slate-100 text-xs">
