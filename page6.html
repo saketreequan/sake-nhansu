@@ -594,9 +594,10 @@
 
     // --- BỘ PHÂN TÍCH HẠNG MỤC KPI TỰ ĐỘNG ---
     function extractKpiId(log, deptCode) {
-        // Lấy tên hạng mục từ cột Hạng mục KPI hoặc tách từ note
-        let categoryText = log['Hạng mục KPI'] || log['hạng mục kpi'] || log['kpi'] || log['KPI'] || '';
-        if (!categoryText && log.note) {
+        let vals = Object.values(log);
+        // Lấy Hạng mục KPI từ Cột F (Index 5)
+        let categoryText = vals.length > 5 ? String(vals[5]) : (log['Hạng mục KPI'] || log['hạng mục kpi'] || log['kpi'] || log['KPI'] || '');
+        if (!categoryText && log.note && typeof log.note === 'string') {
             let match = log.note.match(/\[(.*?)\]/);
             if (match) categoryText = match[1];
             else categoryText = log.note;
@@ -629,8 +630,59 @@
         return null;
     }
 
+    // Hàm bóc tách giao diện thẻ KPI và Nội dung mô tả
+    function parseLogDetails(log) {
+        let vals = Object.values(log);
+        
+        // 1. Cột C (Index 2): Lấy Loại lỗi (A, B, C)
+        let errorType = vals.length > 2 ? String(vals[2]).trim().toUpperCase() : (log.type || 'A');
+        if (!['A', 'B', 'C'].includes(errorType)) errorType = 'A'; 
+
+        let kpiCategory = '';
+        let description = '';
+
+        // 2. Đọc cột F (Index 5) hoặc log.note
+        // Dữ liệu từ Sổ Giám Sát đẩy sang thường có dạng gộp: "[Hạng mục KPI] - Mô tả sự việc"
+        let noteField = vals.length > 5 ? String(vals[5]).trim() : (log.note || '');
+        
+        if (noteField.startsWith('[')) {
+            let match = noteField.match(/^\[(.*?)\](?:\s*-\s*(.*))?$/);
+            if (match) {
+                kpiCategory = match[1];
+                description = match[2] || '';
+            }
+        } else {
+            kpiCategory = log['Hạng mục KPI'] || '';
+            description = noteField;
+        }
+
+        // 3. Đọc cột G (Index 6) nếu đã tự tách cột trên Google Sheet
+        // Cần loại bỏ nhầm lẫn với cột "Đã trừ KPI" (chứa true/false, hoặc Có/Không)
+        if (vals.length > 6) {
+            let colGStr = String(vals[6]).trim();
+            let lowerColG = colGStr.toLowerCase();
+            
+            if (colGStr !== '' && !['true', 'false', 'có', 'không', 'yes', 'no'].includes(lowerColG)) {
+                description = colGStr;
+                // Nếu Sheet đã tách cột rõ ràng, thì Cột F chính là KPI
+                if (!noteField.startsWith('[')) {
+                    kpiCategory = noteField;
+                }
+            }
+        }
+        
+        if (!kpiCategory) kpiCategory = 'LỖI VI PHẠM CA';
+        if (!description) description = 'Vi phạm nội quy ca (Chưa có ghi chú chi tiết)';
+        
+        return {
+            type: errorType,
+            kpi: kpiCategory.toUpperCase(),
+            desc: description
+        };
+    }
+
     // --- 4. GLOBAL STATE & LINK GOOGLE SHEETS ---
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFH8BNClJun_AGDOuR11qaZuK_r0RTBtnS05HKs3fq2Uxn0eEGt7osxlSASYxszdg4gQ/exec"; 
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl66O1nJmEs_6kBKoAxsjughNhy-NcL4m9rvu9v0ksldUJX_3woStWUqzyBFb0LqfI/exec"; 
 
     let rawLogs = [];             // Dữ liệu thô các dòng lỗi kéo về từ google sheets
     let employeeNameList = [];    // Danh sách toàn bộ tên nhân viên tự bóc tách không trùng
@@ -842,15 +894,23 @@
                 </div>`;
         } else {
             matchingLogs.forEach(log => {
-                let typeClass = log.type === 'A' ? 'bg-amber-100 text-amber-700' : (log.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
-                let timeStr = log.time || log.datetime || 'N/A';
+                let parsedLog = parseLogDetails(log);
+                let typeClass = parsedLog.type === 'A' ? 'bg-amber-100 text-amber-700' : (parsedLog.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
+                
+                let vals = Object.values(log);
+                let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
+                if (typeof timeStr !== 'string') timeStr = 'N/A';
+                
                 logsContainer.innerHTML += `
-                    <div class="p-3 bg-slate-50/80 rounded-xl border border-slate-100 text-xs">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-extrabold px-1.5 py-0.5 rounded ${typeClass}">${log.type}</span>
-                            <span class="text-[9px] font-bold text-slate-400">${timeStr}</span>
+                    <div class="p-3 bg-slate-50/80 rounded-xl border border-slate-100 text-xs flex flex-col gap-1.5">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center gap-2">
+                                <span class="font-extrabold px-1.5 py-0.5 rounded ${typeClass} text-[10px]">${parsedLog.type}</span>
+                                <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded text-[9px] uppercase tracking-wide border border-indigo-100">${parsedLog.kpi}</span>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">${timeStr}</span>
                         </div>
-                        <p class="font-semibold text-slate-700">${log.note || 'Lỗi ca kiểm soát'}</p>
+                        <p class="font-semibold text-slate-600 text-[13px]">${parsedLog.desc}</p>
                     </div>
                 `;
             });
@@ -1225,19 +1285,24 @@
             logsList.innerHTML = `<p class="text-slate-400 italic text-xs py-4 text-center">Không có lỗi ca nào từ sổ giám sát.</p>`;
         } else {
             matchingLogs.forEach(log => {
-                let typeBg = log.type === 'A' ? 'bg-amber-100 text-amber-700' : (log.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
-                let timeStr = log.time || log.datetime || 'N/A';
+                let parsedLog = parseLogDetails(log);
+                let typeClass = parsedLog.type === 'A' ? 'bg-amber-100 text-amber-700' : (parsedLog.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
+                
+                let vals = Object.values(log);
+                let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
+                if (typeof timeStr !== 'string') timeStr = 'N/A';
+                
                 logsList.innerHTML += `
                     <div class="flex items-start p-3 bg-slate-50/60 rounded-xl border border-slate-100 text-xs">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mr-3 text-xs font-black ${typeBg}">
-                            ${log.type}
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mr-3 text-xs font-black ${typeClass}">
+                            ${parsedLog.type}
                         </div>
                         <div class="flex-grow">
                             <div class="flex justify-between items-center mb-1">
-                                <p class="font-extrabold text-slate-800">${log.note || 'Lỗi ca'}</p>
+                                <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded text-[9px] uppercase tracking-wide border border-indigo-100">${parsedLog.kpi}</span>
                                 <span class="text-[9px] text-slate-400 font-bold">${timeStr}</span>
                             </div>
-                            <p class="text-[10px] text-slate-400 font-medium">Biên bản ca lỗi vi phạm.</p>
+                            <p class="font-semibold text-slate-600 text-[13px] mt-1">${parsedLog.desc}</p>
                         </div>
                     </div>
                 `;
