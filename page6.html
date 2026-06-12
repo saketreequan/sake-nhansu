@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hệ Thống Tính & Tra Cứu KPI V3.1 PRO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        }
+
+        .table-container::-webkit-scrollbar { height: 6px; width: 6px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .screen { display: none; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .screen.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-3 md:p-6" onload="autoInitOnLoad()">
+
+    <!-- HEADER CHUNG -->
+    <header class="w-full max-w-7xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-slate-200">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-md shadow-indigo-200">
+                <i class="fa-solid fa-calculator text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                    Cổng KPI Phòng Nhân Sự
+                    <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">V3.1 PRO SYNC</span>
+                </h1>
+                <p class="text-xs font-semibold text-slate-400">Tự động đồng bộ Google Sheets • Đồng nhất danh sách ca lỗi & nhân sự</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <!-- Nút cấu hình API Google Sheet -->
+            <button onclick="openConfigModal()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-xs text-slate-600 transition-all flex items-center gap-2 border border-slate-200">
+                <i class="fa-solid fa-cloud-arrow-down text-indigo-600"></i> Apps Script Guide
+            </button>
+            <button id="btn-back-home" onclick="showScreen('screen-role')" class="hidden px-4 py-2.5 bg-white hover:bg-slate-50 rounded-xl font-bold text-xs text-slate-600 shadow-sm border border-slate-200 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Đổi Vai Trò
+            </button>
+        </div>
+    </header>
+
+    <!-- BANNER TRẠNG THÁI ĐỒNG BỘ -->
+    <div class="w-full max-w-7xl mb-4" id="sync-status-banner">
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 flex justify-between items-center text-xs">
+            <div class="flex items-center gap-2 font-bold text-indigo-800">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span id="sync-status-text">Đã đồng bộ thành công với Google Sheets</span>
+            </div>
+            <div class="flex items-center gap-2 text-slate-400 font-bold" id="sync-timestamp-box">
+                <i class="fa-solid fa-clock-rotate-left"></i> Cập nhật lúc: <span id="sync-time-str">Chưa đồng bộ</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="w-full max-w-7xl flex-grow flex flex-col">
+
+        <!-- SCREEN 1: CHỌN VAI TRÒ -->
+        <div id="screen-role" class="screen active max-w-3xl mx-auto w-full mt-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-black mb-3 text-slate-800">Cổng Kiểm Soát Lương KPI</h2>
+                <p class="text-slate-500 font-medium text-sm">Hệ thống tự động liên kết danh sách nhân sự từ Sổ Giám Sát</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nút Kế Toán -->
+                <button onclick="initAccounting()" class="group text-left p-8 glass-panel rounded-3xl hover:border-indigo-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden bg-white">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-indigo-600 transition-colors">
+                        <i class="fa-solid fa-calculator text-2xl text-indigo-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Bộ Phận Kế Toán</h3>
+                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Đọc trực tiếp danh sách nhân viên từ Google Sheet, phân loại FT/PT, rà soát nhanh các ca lỗi và lưu bảng lương chi tiết.</p>
+                    <span class="text-indigo-600 font-bold text-sm flex items-center gap-1">Vào giao diện tính lương <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></span>
+                </button>
+
+                <!-- Nút Nhân Viên -->
+                <button onclick="initEmployee()" class="group text-left p-8 glass-panel rounded-3xl hover:border-emerald-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden bg-white">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-emerald-600 transition-colors">
+                        <i class="fa-solid fa-user-shield text-2xl text-emerald-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Nhân Viên Tra Cứu</h3>
+                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Tìm nhanh theo tên cá nhân đã được đồng bộ để tự đối soát lỗi phạt và tiền lương KPI nhận thực tế.</p>
+                    <span class="text-emerald-600 font-bold text-sm flex items-center gap-1">Tra cứu điểm cá nhân <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- LOADER -->
+        <div id="loader" class="hidden flex-col items-center justify-center py-20 w-full">
+            <div class="relative flex items-center justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 border-t-indigo-600"></div>
+            </div>
+            <p class="text-slate-400 text-xs font-bold mt-4 tracking-wider uppercase">Đang đồng bộ dữ liệu thời gian thực từ Google Sheets...</p>
+        </div>
+
+        <!-- SCREEN 2: BẢNG ĐIỀU KHIỂN KẾ TOÁN -->
+        <div id="screen-accounting" class="screen w-full">
+            
+            <!-- SUB-TABS KẾ TOÁN -->
+            <div class="flex border-b border-slate-200 mb-6">
+                <button onclick="switchAccountingTab('worksheet')" id="subtab-btn-worksheet" class="px-6 py-3 font-black text-sm border-b-2 border-indigo-600 text-indigo-600 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-keyboard"></i> 1. Xử Lý & Tính Toán KPI Chi Tiết
+                </button>
+                <button onclick="switchAccountingTab('report')" id="subtab-btn-report" class="px-6 py-3 font-black text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> 2. Bảng Tổng Hợp Lương KPI Tháng
+                </button>
+            </div>
+
+            <!-- SUB-TAB 1: WORKSHEET NHẬP LIỆU -->
+            <div id="subtab-worksheet" class="space-y-6">
+                <!-- BỘ CHỌN NHÂN SỰ -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                        <h3 class="font-black text-xs text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-user-gear mr-1"></i> Chọn nhân viên & vị trí tính toán (Tự động kéo từ Sheet)</h3>
+                        <button onclick="forceReSync()" class="text-indigo-600 hover:text-indigo-800 font-extrabold text-xs flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-arrows-rotate"></i> Làm mới danh sách nhân sự
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Tên Nhân Viên -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Tên nhân sự thực tế</label>
+                            <select id="work-emp-select" onchange="onWorkEmployeeChanged()" class="bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 cursor-pointer">
+                                <!-- Điền tự động -->
+                            </select>
+                        </div>
+                        <!-- Bộ Phận/Vị trí -->
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Bộ phận và Vị trí</label>
+                            <select id="work-dept-select" onchange="onWorkDeptChanged()" class="bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 cursor-pointer">
+                                <option value="PV_FT">Phục Vụ (Full-Time)</option>
+                                <option value="PV_PT">Phục Vụ (Part-Time)</option>
+                                <option value="RN">Runner (Tiếp thực)</option>
+                                <option value="TV">Tạp Vụ (Housekeeping)</option>
+                            </select>
+                        </div>
+                        <!-- Trạng thái tính lương -->
+                        <div class="flex items-end pb-1.5">
+                            <span id="work-calc-status" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-slate-100 text-slate-500 border border-slate-200">
+                                <i class="fa-solid fa-circle-question mr-1.5"></i> Chưa tính toán kỳ này
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GIAO DIỆN PHÂN MẢNH: CHI TIẾT LỖI vs NHẬP LIỆU -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Cột Trái (4/12): CĂN CỨ ĐỐI SOÁT LỖI PHẠT -->
+                    <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 p-5 flex flex-col max-h-[600px]">
+                        <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                            <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Ca lỗi từ Sổ Giám Sát
+                            </h3>
+                            <span id="work-total-raw-errors" class="text-xs bg-rose-50 text-rose-600 font-extrabold px-2.5 py-1 rounded-full">0 lỗi</span>
+                        </div>
+                        <div id="work-raw-logs-list" class="space-y-3 overflow-y-auto flex-grow table-container pr-1">
+                            <!-- JS Inject -->
+                        </div>
+                    </div>
+
+                    <!-- Cột Phải (7/12): NHẬP LIỆU KPI CHI TIẾT -->
+                    <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 flex flex-col">
+                        <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                            <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-indigo-500"></i> Áp Điểm Trừ Cho Từng KPI Thành Phần
+                            </h3>
+                            <div class="flex gap-2 items-center">
+                                <button onclick="autoFillKpiErrors()" class="text-[9px] font-black text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1 border border-emerald-100" title="Tự động phân tích và điền số lỗi từ Sổ Giám Sát">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Tính
+                                </button>
+                                <span class="text-[10px] font-black text-slate-400 uppercase bg-slate-100 px-2.5 py-1 rounded-md hidden sm:inline-block">Áp Dụng Độc Lập</span>
+                            </div>
+                        </div>
+
+                        <!-- Bảng nhập điểm lỗi -->
+                        <div class="space-y-4 flex-grow" id="work-kpi-entries-box">
+                            <!-- JS Inject các trường nhập tương ứng -->
+                        </div>
+
+                        <!-- Khối Upsell Bia (Nếu là Phục vụ) -->
+                        <div id="work-upsell-box" class="mt-6 pt-6 border-t border-dashed border-slate-200 hidden">
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200/60">
+                                <p class="text-xs font-black text-amber-800 uppercase mb-3 flex items-center gap-1.5"><i class="fa-solid fa-beer-mug-empty"></i> Thử Thách Upsell Bia (Doanh Thu)</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                                    <div>
+                                        <label class="block text-[10px] font-extrabold text-amber-700 uppercase mb-1">Tỷ Lệ Doanh Thu (%)</label>
+                                        <div class="relative">
+                                            <input type="number" id="work-upsell-rate" step="0.1" value="0" oninput="calculateWorksheet()" class="w-full bg-white border border-amber-300 focus:ring-amber-500 focus:border-amber-500 rounded-xl p-2.5 text-sm font-black text-slate-800">
+                                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none font-bold text-amber-700 text-xs">%</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-500">Mức Đạt KPI Bia</p>
+                                        <p class="text-base font-black text-amber-800 mt-1" id="work-upsell-pct">0%</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-500">Tiền Thưởng Upsell</p>
+                                        <p class="text-base font-black text-orange-600 mt-1" id="work-upsell-money">0 đ</p>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-amber-700/80 font-semibold mt-2">*Định mức thưởng: <span id="work-upsell-max-text">300.000đ</span> tối đa. (Đạt từ 35% doanh thu nhận 100%).</p>
+                            </div>
+                        </div>
+
+                        <!-- Tổng cộng & Lưu -->
+                        <div class="mt-6 pt-5 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tổng thực tế nhận</p>
+                                <p class="text-3xl font-black text-slate-800" id="work-total-money">0 đ</p>
+                            </div>
+                            <button onclick="saveWorksheetResult()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 px-8 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95 text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-check"></i> Lưu Kết Quả & Phê Duyệt Lương
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 2: BẢNG TỔNG HỢP LƯƠNG KPI -->
+            <div id="subtab-report" class="hidden space-y-4">
+                <div class="glass-panel rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm flex flex-col">
+                    <div class="p-4 border-b border-slate-200 bg-slate-50/70 flex flex-wrap gap-2 items-center justify-between">
+                        <div class="flex flex-wrap gap-1.5" id="report-tab-filters">
+                            <button onclick="setReportFilter('ALL')" id="rep-btn-ALL" class="rep-btn px-4 py-2 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-sm">Tất cả</button>
+                            <button onclick="setReportFilter('DONE')" id="rep-btn-DONE" class="rep-btn px-4 py-2 rounded-xl text-xs font-black transition-all bg-white text-slate-600">Đã tính lương</button>
+                            <button onclick="setReportFilter('PENDING')" id="rep-btn-PENDING" class="rep-btn px-4 py-2 rounded-xl text-xs font-black transition-all bg-white text-slate-600">Chưa tính lương</button>
+                        </div>
+                        
+                        <div class="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
+                            <input type="text" id="rep-search" placeholder="Tìm tên nhân viên..." oninput="renderReportTable()" class="bg-white border border-slate-200 text-xs rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 w-full md:w-48">
+                            <button onclick="exportPayrollCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                                <i class="fa-solid fa-file-excel"></i> Xuất Excel Bảng Lương
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600">
+                            <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="px-6 py-4 font-black">Nhân viên</th>
+                                    <th scope="col" class="px-6 py-4 font-black">Vị trí</th>
+                                    <th scope="col" class="px-6 py-4 font-black text-center">Định mức KPI chuẩn</th>
+                                    <th scope="col" class="px-6 py-4 font-black text-center">Thưởng Upsell bia</th>
+                                    <th scope="col" class="px-6 py-4 font-black text-right">Tổng thực tế nhận</th>
+                                    <th scope="col" class="px-6 py-4 font-black text-center">Trạng thái</th>
+                                    <th scope="col" class="px-6 py-4 font-black text-center">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-tbody" class="divide-y divide-slate-100">
+                                <!-- JS Inject -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SCREEN 3: NHÂN VIÊN TRA CỨU -->
+        <div id="screen-employee" class="screen w-full max-w-4xl mx-auto">
+            
+            <div class="glass-panel rounded-3xl p-6 md:p-8 bg-white border border-slate-200 shadow-xl mb-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
+                
+                <h2 class="text-xl font-black text-slate-800 mb-4 flex items-center"><i class="fa-solid fa-magnifying-glass text-emerald-500 mr-2"></i>Tra cứu bảng điểm cá nhân</h2>
+                
+                <div class="relative max-w-xl">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <select id="emp-select-box" onchange="renderEmployeeDetails()" class="bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-xl focus:ring-emerald-500 focus:border-emerald-500 block w-full py-3.5 pl-10 pr-10 shadow-sm transition-all cursor-pointer">
+                        <option value="" disabled selected>-- Chọn chính xác tên của bạn để xem kết quả --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Kết quả chi tiết của cá nhân (Mặc định ẩn) -->
+            <div id="emp-result-container" class="hidden space-y-6">
+                <!-- Thẻ điểm -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center">
+                        <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mr-4 text-slate-500"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase">Hợp đồng vị trí</p>
+                            <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-dept">N/A</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-amber-100 shadow-sm flex items-center" id="emp-upsell-stat-card">
+                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mr-4 text-amber-500"><i class="fa-solid fa-beer-mug-empty"></i></div>
+                        <div>
+                            <p class="text-[10px] font-black text-amber-400 uppercase">Thưởng Upsell Bia</p>
+                            <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-upsell">0 đ</p>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-5 border border-emerald-600 shadow-md flex items-center text-white relative overflow-hidden">
+                        <div class="absolute right-2 text-5xl opacity-10"><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-emerald-100 uppercase">Tổng tiền KPI thực nhận</p>
+                            <p class="text-xl font-black" id="emp-total-payout">0 đ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bảng chi tiết từng chỉ tiêu -->
+                <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
+                    <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-indigo-500"></i> Bảng đối soát chi tiết từng chỉ mục KPI thành phần
+                    </h3>
+                    <div class="table-container overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600">
+                            <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3 font-black">Chỉ mục KPI</th>
+                                    <th scope="col" class="px-4 py-3 font-black text-center">Định mức chuẩn</th>
+                                    <th scope="col" class="px-4 py-3 font-black text-center">Số lỗi áp</th>
+                                    <th scope="col" class="px-4 py-3 font-black text-center">% KPI đạt</th>
+                                    <th scope="col" class="px-4 py-3 font-black text-right">Tiền thực nhận</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emp-kpi-tbody" class="divide-y divide-slate-100">
+                                <!-- JS Inject -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Lịch sử vi phạm (Giúp rà soát minh bạch) -->
+                <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
+                    <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-receipt text-slate-400"></i> Biên bản ca lỗi ghi nhận từ Sổ Giám Sát
+                    </h3>
+                    <div id="emp-raw-logs-list" class="space-y-2">
+                        <!-- Danh sách lỗi -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- CONFIGURATION & APPS SCRIPT GUIDE MODAL -->
+    <div id="config-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] scale-95 transition-transform duration-300" id="config-modal-box">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
+                <div>
+                    <h3 class="font-black text-slate-800 text-base"><i class="fa-solid fa-gears text-indigo-600 mr-2"></i>Cấu Hình Script Google Sheet</h3>
+                    <p class="text-[10px] font-bold text-slate-400">Kết nối thời gian thực 2-Way qua Apps Script Web App</p>
+                </div>
+                <button onclick="closeConfigModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Content -->
+            <div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs leading-relaxed text-slate-600 table-container">
+                <p>Ứng dụng này sử dụng API **Google Apps Script** từ file Sổ Giám Sát để tự động đồng bộ tên nhân viên và thông tin các ca vi phạm lỗi.</p>
+                
+                <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-indigo-900">
+                    <strong>Đường dẫn API hiện tại:</strong>
+                    <div class="bg-white/80 border border-indigo-200 rounded-lg p-2 font-mono text-[10px] break-all mt-1 flex justify-between items-center select-all">
+                        <span id="display-api-url">https://script.google.com/...</span>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-slate-800 uppercase text-[10px] tracking-wider mt-4">Hướng dẫn triển khai trên Google Sheets:</h4>
+                <ol class="list-decimal pl-4 space-y-2">
+                    <li>Mở file Google Sheet **Sổ Kiểm Soát Ca** của bạn.</li>
+                    <li>Vào mục **Tiện ích mở rộng (Extensions)** &gt; **Apps Script**.</li>
+                    <li>Copy đoạn code dưới đây và dán đè vào trình soạn thảo code (`Mã.gs`):</li>
+                </ol>
+
+                <div class="relative bg-slate-900 text-slate-200 p-3.5 rounded-xl font-mono text-[10px] overflow-x-auto">
+                    <pre><code class="language-javascript">function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var jsonArray = [];
+  
+  for (var i = 1; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      var headerName = headers[j].toString().trim();
+      obj[headerName] = data[i][j];
+    }
+    jsonArray.push(obj);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify(jsonArray))
+    .setMimeType(ContentService.MimeType.JSON);
+}</code></pre>
+                </div>
+
+                <ol class="list-decimal pl-4 space-y-2" start="4">
+                    <li>Bấm nút **Triển khai (Deploy)** ở góc phải &gt; chọn **Triển khai mới (New deployment)**.</li>
+                    <li>Chọn loại là **Ứng dụng web (Web app)**.</li>
+                    <li>Ở cấu hình **Ai có quyền truy cập (Who has access)** &gt; Chọn **Bất kỳ ai (Anyone)**.</li>
+                    <li>Bấm **Triển khai**, tiến hành cấp quyền xác thực cho tài khoản Google của bạn.</li>
+                    <li>Sao chép đường dẫn URL Web App nhận được dán vào biến `GOOGLE_SCRIPT_URL` ở dòng đầu của mã nguồn HTML này.</li>
+                </ol>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+                <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-black shadow-sm transition-all">
+                    Đóng hướng dẫn
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- 1. SƠ ĐỒ KPI CHI TIẾT THEO TỪNG BỘ PHẬN & VỊ TRÍ ---
+    const DEPT_KPI_SCHEMES = {
+        'PV_FT': {
+            name: 'Phục Vụ (Full-Time)',
+            hasUpsell: true,
+            upsellMax: 300000,
+            items: [
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000 },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 200000 },
+                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 300000 },
+                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 300000 },
+                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 300000 }
+            ]
+        },
+        'PV_PT': {
+            name: 'Phục Vụ (Part-Time)',
+            hasUpsell: true,
+            upsellMax: 150000,
+            items: [
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 150000 },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 100000 },
+                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 150000 },
+                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 150000 },
+                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 150000 }
+            ]
+        },
+        'RN': {
+            name: 'Runner (Tiếp thực)',
+            hasUpsell: false,
+            items: [
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000 },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 300000 },
+                { id: 'van_hanh', name: 'Vận hành Bàn tiếp thực & Kho bia', maxMoney: 500000 },
+                { id: 'nuoc_cham', name: 'Nước chấm & Peak Hour', maxMoney: 500000 }
+            ]
+        },
+        'TV': {
+            name: 'Tạp Vụ (Housekeeping)',
+            hasUpsell: false,
+            items: [
+                { id: 've_sinh_sanh', name: 'Vệ sinh sảnh, lối đi & điểm rơi', maxMoney: 600000 },
+                { id: 'toilet', name: 'Toilet khách & khu rửa tay', maxMoney: 450000 },
+                { id: 'khu_giat', name: 'Khu giặt rửa, khăn & dụng cụ', maxMoney: 350000 },
+                { id: 'rac_thai', name: 'Rác thải & Hậu cần', maxMoney: 250000 },
+                { id: 'suat_an', name: 'Suất ăn nhân viên', maxMoney: 250000 },
+                { id: 'cham_cong', name: 'Chấm công & Kỷ luật', maxMoney: 300000 },
+                { id: 'tac_phong', name: 'Tác phong & Phối hợp', maxMoney: 300000 }
+            ]
+        }
+    };
+
+    // --- 2. BIỂU THANG ĐIỂM KPI (ÁP DỤNG ĐỘC LẬP THEO QUY CHUẨN ẢNH) ---
+    function getKpiPercent(errors) {
+        if (errors === '' || errors === undefined || errors === null) return 100;
+        let errCount = parseInt(errors) || 0;
+        if (errCount <= 1) return 100;
+        if (errCount <= 3) return 90;
+        if (errCount <= 5) return 70;
+        if (errCount <= 7) return 50;
+        if (errCount <= 9) return 30;
+        return 0;
+    }
+
+    // --- 3. BIỂU THANG ĐIỂM UPSELL BIA ---
+    function getUpsellPercent(rate) {
+        let r = parseFloat(rate) || 0;
+        if (r < 28) return 0;
+        if (r < 30) return 50;
+        if (r < 33) return 70;
+        if (r < 35) return 90;
+        return 100;
+    }
+
+    // --- BỘ PHÂN TÍCH HẠNG MỤC KPI TỰ ĐỘNG ---
+    function extractKpiId(log, deptCode) {
+        // Lấy tên hạng mục từ cột Hạng mục KPI hoặc tách từ note
+        let categoryText = log['Hạng mục KPI'] || log['hạng mục kpi'] || log['kpi'] || log['KPI'] || '';
+        if (!categoryText && log.note) {
+            let match = log.note.match(/\[(.*?)\]/);
+            if (match) categoryText = match[1];
+            else categoryText = log.note;
+        }
+        categoryText = categoryText.toLowerCase();
+
+        // Mapping từ khóa khớp với ID của scheme
+        if (deptCode.startsWith('PV')) {
+            if (categoryText.includes('chuyên cần')) return 'chuyen_can';
+            if (categoryText.includes('kỷ luật') || categoryText.includes('chấm công') || categoryText.includes('trễ')) return 'ky_luat';
+            if (categoryText.includes('order') || categoryText.includes('bàn') || categoryText.includes('thiếu món') || categoryText.includes('chất lượng') || categoryText.includes('phục vụ')) return 'chat_luong';
+            if (categoryText.includes('vệ sinh') || categoryText.includes('ccdc')) return 've_sinh';
+            if (categoryText.includes('tụ tập') || categoryText.includes('điện thoại') || categoryText.includes('thái độ') || categoryText.includes('tác phong') || categoryText.includes('bám khu') || categoryText.includes('đợi lâu')) return 'tac_phong';
+        }
+        if (deptCode === 'RN') {
+            if (categoryText.includes('chuyên cần')) return 'chuyen_can';
+            if (categoryText.includes('kỷ luật') || categoryText.includes('chấm công')) return 'ky_luat';
+            if (categoryText.includes('tốc độ') || categoryText.includes('sai món') || categoryText.includes('bia') || categoryText.includes('nhiệt độ') || categoryText.includes('vệ sinh') || categoryText.includes('kho') || categoryText.includes('vận hành') || categoryText.includes('tiếp thực')) return 'van_hanh';
+            if (categoryText.includes('nước chấm') || categoryText.includes('chuẩn bị') || categoryText.includes('peak')) return 'nuoc_cham';
+        }
+        if (deptCode === 'TV') {
+            if (categoryText.includes('sảnh') || categoryText.includes('lối đi') || categoryText.includes('trơn') || categoryText.includes('điểm rơi')) return 've_sinh_sanh';
+            if (categoryText.includes('toilet') || categoryText.includes('rửa tay') || categoryText.includes('mùi') || categoryText.includes('khách')) return 'toilet';
+            if (categoryText.includes('giặt') || categoryText.includes('khăn') || categoryText.includes('dụng cụ')) return 'khu_giat';
+            if (categoryText.includes('rác') || categoryText.includes('hậu cần')) return 'rac_thai';
+            if (categoryText.includes('suất ăn')) return 'suat_an';
+            if (categoryText.includes('chấm công') || categoryText.includes('kỷ luật')) return 'cham_cong';
+            if (categoryText.includes('tác phong') || categoryText.includes('phối hợp')) return 'tac_phong';
+        }
+        return null;
+    }
+
+    // --- 4. GLOBAL STATE & LINK GOOGLE SHEETS ---
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFH8BNClJun_AGDOuR11qaZuK_r0RTBtnS05HKs3fq2Uxn0eEGt7osxlSASYxszdg4gQ/exec"; 
+
+    let rawLogs = [];             // Dữ liệu thô các dòng lỗi kéo về từ google sheets
+    let employeeNameList = [];    // Danh sách toàn bộ tên nhân viên tự bóc tách không trùng
+    let localPayrollResults = {}; // Bảng tổng hợp duyệt lương đã tính toán (Lưu LocalStorage)
+    let activeAccountingTab = 'worksheet';
+    let currentReportFilter = 'ALL';
+
+    // Bóc tách chuẩn hóa tên bộ phận kéo về từ Sheets để khớp với Schema
+    function normalizeDeptCode(deptString) {
+        if (!deptString) return 'PV_FT';
+        let d = deptString.toUpperCase().trim();
+        if (d.includes('PHỤC VỤ') || d === 'PV' || d.includes('SERVING')) return 'PV_FT';
+        if (d.includes('RUNNER') || d === 'RN' || d.includes('TIẾP THỰC')) return 'RN';
+        if (d.includes('TẠP VỤ') || d === 'TV' || d.includes('HOUSEKEEPING')) return 'TV';
+        return 'PV_FT'; // Mặc định ban đầu
+    }
+
+    // --- 5. TỰ ĐỘNG ĐỒNG BỘ DỮ LIỆU KHI TẢI TRANG ---
+    function autoInitOnLoad() {
+        document.getElementById('display-api-url').innerText = GOOGLE_SCRIPT_URL;
+        fetchData();
+    }
+
+    async function forceReSync() {
+        await fetchData();
+        // Cập nhật lại dropdown danh sách nhân viên
+        const select = document.getElementById('work-emp-select');
+        let currentSel = select.value;
+        
+        select.innerHTML = '<option value="" disabled selected>-- Chọn nhân viên --</option>';
+        employeeNameList.forEach(name => {
+            select.innerHTML += `<option value="${name}">${name}</option>`;
+        });
+        
+        if (currentSel && employeeNameList.includes(currentSel)) {
+            select.value = currentSel;
+        }
+    }
+
+    // --- 6. HÀM ĐỒNG BỘ CHÍNH ---
+    async function fetchData() {
+        document.getElementById('loader').classList.remove('hidden');
+        document.getElementById('screen-accounting').classList.add('hidden');
+        document.getElementById('screen-employee').classList.add('hidden');
+        
+        const statusText = document.getElementById('sync-status-text');
+        const timeText = document.getElementById('sync-time-str');
+
+        try {
+            statusText.innerText = "Đang kết nối để tải dữ liệu...";
+            const response = await fetch(GOOGLE_SCRIPT_URL);
+            rawLogs = await response.json();
+            
+            // Lưu lại bộ nhớ cache của trình duyệt để dùng dự phòng offline
+            localStorage.setItem('gs_logs_local_2026', JSON.stringify(rawLogs));
+            
+            statusText.innerText = "Đồng bộ dữ liệu Google Sheets thành công!";
+            let now = new Date();
+            timeText.innerText = now.toLocaleDateString('vi-VN') + ' - ' + now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+        } catch (error) {
+            console.warn("Mất kết nối API. Tải dữ liệu từ cache offline của trình duyệt.");
+            rawLogs = JSON.parse(localStorage.getItem('gs_logs_local_2026')) || [];
+            statusText.innerText = "Sử dụng dữ liệu tạm (Offline Cache)";
+            timeText.innerText = "Lần cuối: Không xác định";
+        }
+
+        // Bóc tách danh sách nhân sự không trùng lặp và chuẩn hóa
+        let namesMap = {};
+        rawLogs.forEach(log => {
+            let nameField = log.empName || log.employeeName || '';
+            if (!nameField) return;
+
+            // Chuẩn hóa tên chữ hoa đầu từ đẹp đẽ
+            let rawName = nameField.trim();
+            let nameParts = rawName.split(/\s+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+            let empName = nameParts.join(' ');
+            
+            // Ánh xạ bộ phận tạm thời từ Sổ kiểm soát
+            let deptField = log.dept || log.department || '';
+            namesMap[empName] = normalizeDeptCode(deptField);
+        });
+
+        employeeNameList = Object.keys(namesMap).sort();
+
+        // Tải bảng kết quả duyệt lương lịch sử
+        localPayrollResults = JSON.parse(localStorage.getItem('payroll_kpi_results_v3')) || {};
+
+        document.getElementById('loader').classList.add('hidden');
+    }
+
+    // --- 7. ĐIỀU HƯỚNG GIAO DIỆN ---
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        if (screenId === 'screen-role') {
+            document.getElementById('btn-back-home').classList.add('hidden');
+            document.getElementById('sync-status-banner').classList.remove('hidden');
+        } else {
+            document.getElementById('btn-back-home').classList.remove('hidden');
+            document.getElementById('sync-status-banner').classList.add('hidden');
+        }
+    }
+
+    async function initAccounting() {
+        await forceReSync();
+        showScreen('screen-accounting');
+        switchAccountingTab('worksheet');
+    }
+
+    async function initEmployee() {
+        await forceReSync();
+        showScreen('screen-employee');
+        
+        const select = document.getElementById('emp-select-box');
+        select.innerHTML = '<option value="" disabled selected>-- Chọn chính xác tên của bạn để xem kết quả --</option>';
+        employeeNameList.forEach(name => {
+            select.innerHTML += `<option value="${name}">${name}</option>`;
+        });
+        
+        document.getElementById('emp-result-container').classList.add('hidden');
+    }
+
+    function switchAccountingTab(tabName) {
+        activeAccountingTab = tabName;
+        document.getElementById('subtab-worksheet').classList.add('hidden');
+        document.getElementById('subtab-report').classList.add('hidden');
+        
+        document.getElementById('subtab-btn-worksheet').classList.remove('border-indigo-600', 'text-indigo-600');
+        document.getElementById('subtab-btn-worksheet').classList.add('border-transparent', 'text-slate-500');
+        document.getElementById('subtab-btn-report').classList.remove('border-indigo-600', 'text-indigo-600');
+        document.getElementById('subtab-btn-report').classList.add('border-transparent', 'text-slate-500');
+
+        if (tabName === 'worksheet') {
+            document.getElementById('subtab-worksheet').classList.remove('hidden');
+            document.getElementById('subtab-btn-worksheet').classList.add('border-indigo-600', 'text-indigo-600');
+            document.getElementById('subtab-btn-worksheet').classList.remove('border-transparent', 'text-slate-500');
+        } else {
+            document.getElementById('subtab-report').classList.remove('hidden');
+            document.getElementById('subtab-btn-report').classList.add('border-indigo-600', 'text-indigo-600');
+            document.getElementById('subtab-btn-report').classList.remove('border-transparent', 'text-slate-500');
+            renderReportTable();
+        }
+    }
+
+    // --- 8. TÁC NGHIỆP TRÊN WORKSHEET (KẾ TOÁN) ---
+    let currentWorkEmployee = '';
+    let currentWorkDept = 'PV_FT';
+
+    function onWorkEmployeeChanged() {
+        currentWorkEmployee = document.getElementById('work-emp-select').value;
+        if (!currentWorkEmployee) return;
+
+        // Dự đoán bộ phận mặc định dựa trên dữ liệu Google Sheet hoặc lịch sử tính toán trước đó
+        let savedResult = localPayrollResults[currentWorkEmployee];
+        if (savedResult) {
+            currentWorkDept = savedResult.deptCode;
+        } else {
+            let log = rawLogs.find(l => {
+                let nameField = l.empName || l.employeeName || '';
+                if (!nameField) return false;
+                return nameField.trim().toUpperCase() === currentWorkEmployee.toUpperCase();
+            });
+            let rawDept = log ? (log.dept || log.department || '') : '';
+            currentWorkDept = normalizeDeptCode(rawDept);
+        }
+
+        document.getElementById('work-dept-select').value = currentWorkDept;
+        
+        // Load cấu hình của nhân sự đó lên worksheet
+        renderWorksheetData();
+    }
+
+    function onWorkDeptChanged() {
+        currentWorkDept = document.getElementById('work-dept-select').value;
+        renderWorksheetData();
+    }
+
+    function renderWorksheetData() {
+        if (!currentWorkEmployee) return;
+
+        // Cập nhật trạng thái
+        const statusEl = document.getElementById('work-calc-status');
+        const savedResult = localPayrollResults[currentWorkEmployee];
+        if (savedResult && savedResult.deptCode === currentWorkDept) {
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200";
+            statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Đã phê duyệt tính lương';
+        } else {
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-amber-100 text-amber-700 border border-amber-200";
+            statusEl.innerHTML = '<i class="fa-solid fa-clock mr-1.5"></i> Đang chỉnh sửa / Chưa lưu';
+        }
+
+        // Bày các ca lỗi chi tiết từ Google Sheet của nhân viên này ra để kế toán đối soát (Cột Trái)
+        const logsContainer = document.getElementById('work-raw-logs-list');
+        logsContainer.innerHTML = '';
+        
+        let matchingLogs = rawLogs.filter(log => {
+            let nameField = log.empName || log.employeeName || '';
+            if (!nameField) return false;
+            return nameField.trim().toUpperCase() === currentWorkEmployee.toUpperCase();
+        });
+
+        document.getElementById('work-total-raw-errors').innerText = `${matchingLogs.length} lỗi`;
+
+        if (matchingLogs.length === 0) {
+            logsContainer.innerHTML = `
+                <div class="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                    <p class="text-xs text-slate-400 font-bold">Không có ca lỗi vi phạm nào trong tháng</p>
+                </div>`;
+        } else {
+            matchingLogs.forEach(log => {
+                let typeClass = log.type === 'A' ? 'bg-amber-100 text-amber-700' : (log.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
+                let timeStr = log.time || log.datetime || 'N/A';
+                logsContainer.innerHTML += `
+                    <div class="p-3 bg-slate-50/80 rounded-xl border border-slate-100 text-xs">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-extrabold px-1.5 py-0.5 rounded ${typeClass}">${log.type}</span>
+                            <span class="text-[9px] font-bold text-slate-400">${timeStr}</span>
+                        </div>
+                        <p class="font-semibold text-slate-700">${log.note || 'Lỗi ca kiểm soát'}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Tạo các ô nhập KPI chuẩn cho vị trí được chọn (Cột Phải)
+        const scheme = DEPT_KPI_SCHEMES[currentWorkDept];
+        const entriesBox = document.getElementById('work-kpi-entries-box');
+        entriesBox.innerHTML = '';
+
+        // Tự động phân tích số lỗi từ ca cho từng hạng mục
+        let autoErrors = {};
+        matchingLogs.forEach(log => {
+            let kpiId = extractKpiId(log, currentWorkDept);
+            if (kpiId) {
+                autoErrors[kpiId] = (autoErrors[kpiId] || 0) + 1;
+            }
+        });
+
+        let storedValues = (savedResult && savedResult.deptCode === currentWorkDept) ? savedResult.kpiErrors : null;
+
+        scheme.items.forEach(item => {
+            let val = 0;
+            let hintHtml = '';
+            
+            if (storedValues) {
+                val = storedValues[item.id] !== undefined ? storedValues[item.id] : 0;
+                let autoVal = autoErrors[item.id] || 0;
+                // Nếu số liệu lưu trữ khác với máy tự đếm, hiển thị tooltip cảnh báo
+                if (val !== autoVal) {
+                    hintHtml = `<span class="text-[9px] text-amber-500 font-bold ml-1.5 cursor-help" title="Phần mềm đếm được ${autoVal} lỗi từ Sổ Giám Sát. Bạn có thể tự sửa đổi."><i class="fa-solid fa-circle-exclamation"></i> Sổ báo: ${autoVal}</span>`;
+                }
+            } else {
+                val = autoErrors[item.id] || 0; // Tự động điền số đếm được nếu Kế toán chưa lưu bảng
+            }
+
+            entriesBox.innerHTML += `
+                <div class="grid grid-cols-12 gap-3 items-center p-3 bg-slate-50 hover:bg-slate-100/70 rounded-xl border border-slate-100 transition-colors">
+                    <div class="col-span-6">
+                        <p class="text-xs font-black text-slate-800">${item.name} ${hintHtml}</p>
+                        <p class="text-[10px] text-slate-400 font-bold mt-0.5">Định mức chuẩn: ${formatMoney(item.maxMoney)}</p>
+                    </div>
+                    <div class="col-span-3">
+                        <label class="block text-[9px] font-black text-slate-400 mb-0.5">Số lỗi phạt</label>
+                        <input type="number" id="work-input-err-${item.id}" min="0" value="${val}" oninput="calculateWorksheet()" class="w-full bg-white border border-slate-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg p-1.5 text-xs font-black text-center text-slate-700">
+                    </div>
+                    <div class="col-span-3 text-right">
+                        <p class="text-[9px] font-black text-slate-400">Đạt (% KPI) / Nhận</p>
+                        <p class="text-xs font-extrabold text-indigo-600 mt-1" id="work-calc-payout-${item.id}">100% - 0đ</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Xử lý Upsell bia
+        const upsellBox = document.getElementById('work-upsell-box');
+        if (scheme.hasUpsell) {
+            upsellBox.classList.remove('hidden');
+            document.getElementById('work-upsell-max-text').innerText = formatMoney(scheme.upsellMax);
+            
+            let upsellRate = (savedResult && savedResult.deptCode === currentWorkDept) ? (savedResult.upsellRate || 0) : 0;
+            document.getElementById('work-upsell-rate').value = upsellRate;
+        } else {
+            upsellBox.classList.add('hidden');
+        }
+
+        calculateWorksheet();
+    }
+
+    function autoFillKpiErrors() {
+        if (!currentWorkEmployee) return;
+        
+        let matchingLogs = rawLogs.filter(log => {
+            let nameField = log.empName || log.employeeName || '';
+            return nameField.trim().toUpperCase() === currentWorkEmployee.toUpperCase();
+        });
+
+        let autoErrors = {};
+        matchingLogs.forEach(log => {
+            let kpiId = extractKpiId(log, currentWorkDept);
+            if (kpiId) {
+                autoErrors[kpiId] = (autoErrors[kpiId] || 0) + 1;
+            }
+        });
+
+        const scheme = DEPT_KPI_SCHEMES[currentWorkDept];
+        scheme.items.forEach(item => {
+            const inputEl = document.getElementById(`work-input-err-${item.id}`);
+            if (inputEl) {
+                inputEl.value = autoErrors[item.id] || 0;
+            }
+        });
+
+        calculateWorksheet();
+        alert(`Đã hoàn tất tự động trích xuất và điền lỗi từ ${matchingLogs.length} ca ghi nhận của ${currentWorkEmployee}.`);
+    }
+
+    function calculateWorksheet() {
+        if (!currentWorkEmployee) return;
+
+        const scheme = DEPT_KPI_SCHEMES[currentWorkDept];
+        let totalPayout = 0;
+        let totalMax = 0;
+
+        scheme.items.forEach(item => {
+            const inputEl = document.getElementById(`work-input-err-${item.id}`);
+            let errors = inputEl ? parseInt(inputEl.value) || 0 : 0;
+            let pct = getKpiPercent(errors);
+            let itemPayout = (item.maxMoney * pct) / 100;
+            totalPayout += itemPayout;
+            totalMax += item.maxMoney;
+
+            const calcEl = document.getElementById(`work-calc-payout-${item.id}`);
+            if (calcEl) {
+                calcEl.innerHTML = `<span class="${pct === 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</span> <span class="text-slate-300 mx-1">|</span> <span class="text-slate-800">${formatMoney(itemPayout)}</span>`;
+            }
+        });
+
+        if (scheme.hasUpsell) {
+            let rate = parseFloat(document.getElementById('work-upsell-rate').value) || 0;
+            let upsellPct = getUpsellPercent(rate);
+            let upsellPayout = (scheme.upsellMax * upsellPct) / 100;
+            totalPayout += upsellPayout;
+            totalMax += scheme.upsellMax;
+
+            document.getElementById('work-upsell-pct').innerText = `${upsellPct}%`;
+            document.getElementById('work-upsell-money').innerText = formatMoney(upsellPayout);
+        }
+
+        document.getElementById('work-total-money').innerHTML = `${formatMoney(totalPayout)} <span class="text-xl text-slate-300 font-bold ml-1 tracking-normal">/ ${formatMoney(totalMax)}</span>`;
+    }
+
+    function saveWorksheetResult() {
+        if (!currentWorkEmployee) {
+            alert('Vui lòng chọn nhân viên trước!');
+            return;
+        }
+
+        const scheme = DEPT_KPI_SCHEMES[currentWorkDept];
+        let kpiErrors = {};
+        let totalKpiMax = 0;
+        let totalPayout = 0;
+
+        scheme.items.forEach(item => {
+            const inputEl = document.getElementById(`work-input-err-${item.id}`);
+            let errors = inputEl ? parseInt(inputEl.value) || 0 : 0;
+            kpiErrors[item.id] = errors;
+            
+            let pct = getKpiPercent(errors);
+            totalPayout += (item.maxMoney * pct) / 100;
+            totalKpiMax += item.maxMoney;
+        });
+
+        let upsellRate = 0;
+        let upsellMoney = 0;
+        if (scheme.hasUpsell) {
+            upsellRate = parseFloat(document.getElementById('work-upsell-rate').value) || 0;
+            let upsellPct = getUpsellPercent(upsellRate);
+            upsellMoney = (scheme.upsellMax * upsellPct) / 100;
+            totalPayout += upsellMoney;
+            totalKpiMax += scheme.upsellMax;
+        }
+
+        localPayrollResults[currentWorkEmployee] = {
+            employeeName: currentWorkEmployee,
+            deptCode: currentWorkDept,
+            kpiErrors: kpiErrors,
+            upsellRate: upsellRate,
+            upsellMoney: upsellMoney,
+            totalPayout: totalPayout,
+            totalKpiMax: totalKpiMax,
+            updatedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('payroll_kpi_results_v3', JSON.stringify(localPayrollResults));
+
+        onWorkEmployeeChanged();
+        alert(`Lưu kết quả duyệt lương thành công cho nhân viên: ${currentWorkEmployee}`);
+    }
+
+    // --- 9. BẢNG TỔNG HỢP LƯƠNG ---
+    function setReportFilter(filterVal) {
+        currentReportFilter = filterVal;
+        document.querySelectorAll('.rep-btn').forEach(btn => {
+            btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+            btn.classList.add('bg-white', 'text-slate-600');
+        });
+
+        const activeBtn = document.getElementById(`rep-btn-${filterVal}`);
+        if (activeBtn) {
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+            activeBtn.classList.remove('bg-white', 'text-slate-600');
+        }
+        renderReportTable();
+    }
+
+    function renderReportTable() {
+        const tbody = document.getElementById('report-tbody');
+        const searchTerm = document.getElementById('rep-search').value.toLowerCase();
+        
+        tbody.innerHTML = '';
+
+        employeeNameList.forEach(name => {
+            if (searchTerm && !name.toLowerCase().includes(searchTerm)) return;
+
+            let result = localPayrollResults[name];
+            let isCalculated = !!result;
+
+            if (currentReportFilter === 'DONE' && !isCalculated) return;
+            if (currentReportFilter === 'PENDING' && isCalculated) return;
+
+            let deptName = 'Chưa xác định';
+            let maxKpi = '---';
+            let upsellText = '---';
+            let payoutText = '---';
+            let statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-400">CHƯA TÍNH TOÁN</span>';
+
+            if (isCalculated) {
+                deptName = DEPT_KPI_SCHEMES[result.deptCode].name;
+                maxKpi = formatMoney(result.totalKpiMax - result.upsellMoney);
+                upsellText = result.upsellMoney > 0 ? formatMoney(result.upsellMoney) : '0đ';
+                payoutText = formatMoney(result.totalPayout);
+                statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700"><i class="fa-solid fa-circle-check"></i> ĐÃ DUYỆT</span>';
+            }
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 font-black text-slate-800">${name}</td>
+                    <td class="px-6 py-4 font-bold text-slate-500">${isCalculated ? deptName : '---'}</td>
+                    <td class="px-6 py-4 text-center font-bold text-slate-700">${maxKpi}</td>
+                    <td class="px-6 py-4 text-center font-bold text-amber-600">${upsellText}</td>
+                    <td class="px-6 py-4 text-right font-black text-indigo-600 text-sm">${payoutText}</td>
+                    <td class="px-6 py-4 text-center">${statusBadge}</td>
+                    <td class="px-6 py-4 text-center flex gap-1.5 justify-center">
+                        <button onclick="gotoWorksheet('${name}')" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-black text-[10px] transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-calculator"></i> Tính KPI
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function gotoWorksheet(empName) {
+        document.getElementById('work-emp-select').value = empName;
+        onWorkEmployeeChanged();
+        switchAccountingTab('worksheet');
+    }
+
+    // --- 10. TRA CỨU CÁ NHÂN (NHÂN VIÊN) ---
+    function renderEmployeeDetails() {
+        const name = document.getElementById('emp-select-box').value;
+        if (!name) return;
+
+        const container = document.getElementById('emp-result-container');
+        container.classList.remove('hidden');
+
+        let result = localPayrollResults[name];
+
+        if (!result) {
+            container.innerHTML = `
+                <div class="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-200">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                        <i class="fa-solid fa-clock text-3xl"></i>
+                    </div>
+                    <h3 class="font-black text-slate-700 text-base mb-1">Dữ liệu tính lương đang chờ xử lý</h3>
+                    <p class="text-xs text-slate-400 font-medium">Bộ phận kế toán chưa cập nhật hoặc đang phê duyệt bảng lương KPI của bạn trong kỳ này.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center">
+                    <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mr-4 text-slate-500"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase">Hợp đồng vị trí</p>
+                        <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-dept">N/A</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-amber-100 shadow-sm flex items-center" id="emp-upsell-stat-card">
+                    <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mr-4 text-amber-500"><i class="fa-solid fa-beer-mug-empty"></i></div>
+                    <div>
+                        <p class="text-[10px] font-black text-amber-400 uppercase">Thưởng Upsell Bia</p>
+                        <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-upsell">0 đ</p>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-5 border border-emerald-600 shadow-md flex items-center text-white relative overflow-hidden">
+                    <div class="absolute right-2 text-5xl opacity-10"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <div class="relative z-10">
+                        <p class="text-[10px] font-bold text-emerald-100 uppercase">Tổng tiền KPI thực nhận</p>
+                        <p class="text-xl font-black" id="emp-total-payout">0 đ</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
+                <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-indigo-500"></i> Bảng đối soát chi tiết từng chỉ mục KPI thành phần
+                </h3>
+                <div class="table-container overflow-x-auto">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 font-black">Chỉ mục KPI</th>
+                                <th scope="col" class="px-4 py-3 font-black text-center">Định mức chuẩn</th>
+                                <th scope="col" class="px-4 py-3 font-black text-center">Số lỗi áp</th>
+                                <th scope="col" class="px-4 py-3 font-black text-center">% KPI đạt</th>
+                                <th scope="col" class="px-4 py-3 font-black text-right">Tiền thực nhận</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emp-kpi-tbody" class="divide-y divide-slate-100">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
+                <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-slate-400"></i> Biên bản ca lỗi ghi nhận từ Sổ Giám Sát
+                </h3>
+                <div id="emp-raw-logs-list" class="space-y-2">
+                    <!-- Danh sách lỗi -->
+                </div>
+            </div>
+        `;
+
+        const scheme = DEPT_KPI_SCHEMES[result.deptCode];
+        
+        document.getElementById('emp-badge-dept').innerText = scheme.name;
+        document.getElementById('emp-total-payout').innerHTML = `${formatMoney(result.totalPayout)} <span class="text-base text-emerald-100/70 font-bold ml-1 tracking-normal">/ ${formatMoney(result.totalKpiMax)}</span>`;
+
+        const upsellCard = document.getElementById('emp-upsell-stat-card');
+        if (scheme.hasUpsell) {
+            upsellCard.classList.remove('hidden');
+            let upsellPct = getUpsellPercent(result.upsellRate);
+            document.getElementById('emp-badge-upsell').innerText = `${formatMoney(result.upsellMoney)} (${upsellPct}% đạt từ ${result.upsellRate}% DT)`;
+        } else {
+            upsellCard.classList.add('hidden');
+        }
+
+        const tbody = document.getElementById('emp-kpi-tbody');
+        tbody.innerHTML = '';
+
+        scheme.items.forEach(item => {
+            let errCount = result.kpiErrors[item.id] !== undefined ? result.kpiErrors[item.id] : 0;
+            let pct = getKpiPercent(errCount);
+            let itemPayout = (item.maxMoney * pct) / 100;
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 font-bold text-slate-800">${item.name}</td>
+                    <td class="px-4 py-3 text-center font-semibold text-slate-400">${formatMoney(item.maxMoney)}</td>
+                    <td class="px-4 py-3 text-center font-extrabold text-rose-600 bg-rose-50/40">${errCount} lỗi</td>
+                    <td class="px-4 py-3 text-center font-black ${pct === 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</td>
+                    <td class="px-4 py-3 text-right font-black text-slate-800">${formatMoney(itemPayout)}</td>
+                </tr>
+            `;
+        });
+
+        const logsList = document.getElementById('emp-raw-logs-list');
+        logsList.innerHTML = '';
+
+        let matchingLogs = rawLogs.filter(log => {
+            let nameField = log.empName || log.employeeName || '';
+            if (!nameField) return false;
+            return nameField.trim().toUpperCase() === name.toUpperCase();
+        });
+
+        if (matchingLogs.length === 0) {
+            logsList.innerHTML = `<p class="text-slate-400 italic text-xs py-4 text-center">Không có lỗi ca nào từ sổ giám sát.</p>`;
+        } else {
+            matchingLogs.forEach(log => {
+                let typeBg = log.type === 'A' ? 'bg-amber-100 text-amber-700' : (log.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
+                let timeStr = log.time || log.datetime || 'N/A';
+                logsList.innerHTML += `
+                    <div class="flex items-start p-3 bg-slate-50/60 rounded-xl border border-slate-100 text-xs">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mr-3 text-xs font-black ${typeBg}">
+                            ${log.type}
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-center mb-1">
+                                <p class="font-extrabold text-slate-800">${log.note || 'Lỗi ca'}</p>
+                                <span class="text-[9px] text-slate-400 font-bold">${timeStr}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-medium">Biên bản ca lỗi vi phạm.</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    // --- 11. XUẤT FILE EXCEL (CSV) ---
+    function exportPayrollCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+        csvContent += "Tên nhân viên,Bộ phận chi tiết,Thưởng chuẩn tối đa,Tiền thưởng bia,Tổng thực tế nhận,Trạng thái\r\n";
+
+        employeeNameList.forEach(name => {
+            let result = localPayrollResults[name];
+            if (result) {
+                let s = DEPT_KPI_SCHEMES[result.deptCode];
+                csvContent += `"${name}","${s.name}",${result.totalKpiMax - result.upsellMoney},${result.upsellMoney},${result.totalPayout},"ĐÃ DUYỆT"\r\n`;
+            } else {
+                csvContent += `"${name}","CHƯA TÍNH",0,0,0,"CHƯA DUYỆT"\r\n`;
+            }
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `Bang_Luong_KPI_V3.1_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // --- 12. POPUP MODALS LOGIC ---
+    function openConfigModal() {
+        const modal = document.getElementById('config-modal');
+        const box = document.getElementById('config-modal-box');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+        }, 50);
+    }
+
+    function closeConfigModal() {
+        const modal = document.getElementById('config-modal');
+        const box = document.getElementById('config-modal-box');
+        modal.classList.add('opacity-0');
+        box.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    function formatMoney(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+    }
+</script>
+</body>
+</html>
