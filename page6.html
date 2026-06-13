@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hệ Thống Tính & Tra Cứu KPI V3.1 PRO</title>
+    <title>Hệ Thống Tính & Tra Cứu KPI V3.2 PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -53,13 +53,12 @@
             <div>
                 <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
                     Cổng KPI Phòng Nhân Sự
-                    <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">V3.1 PRO SYNC</span>
+                    <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">V3.2 PRO MAX</span>
                 </h1>
                 <p class="text-xs font-semibold text-slate-400">Tự động đồng bộ Google Sheets • Đồng nhất danh sách ca lỗi & nhân sự</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <!-- Nút cấu hình API Google Sheet -->
             <button onclick="openConfigModal()" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-bold text-xs text-slate-600 transition-all flex items-center gap-2 border border-slate-200">
                 <i class="fa-solid fa-cloud-arrow-down text-indigo-600"></i> Apps Script Guide
             </button>
@@ -95,14 +94,14 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Nút Kế Toán (Đã thêm bảo mật) -->
+                <!-- Nút Kế Toán -->
                 <button onclick="openPasswordModal()" class="group text-left p-8 glass-panel rounded-3xl hover:border-indigo-400 hover:shadow-xl transition-all duration-300 relative overflow-hidden bg-white">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
                     <div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-indigo-600 transition-colors">
                         <i class="fa-solid fa-calculator text-2xl text-indigo-600 group-hover:text-white transition-colors"></i>
                     </div>
                     <h3 class="text-xl font-black text-slate-800 mb-2">Bộ Phận Kế Toán <i class="fa-solid fa-lock text-sm text-slate-300 ml-1"></i></h3>
-                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Đọc trực tiếp danh sách nhân viên từ Google Sheet, phân loại FT/PT, rà soát nhanh các ca lỗi và lưu bảng lương chi tiết.</p>
+                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Đọc trực tiếp danh sách nhân viên từ Google Sheet, phân loại FT/PT, tính lương nhân viên & Giám sát chi tiết.</p>
                     <span class="text-indigo-600 font-bold text-sm flex items-center gap-1">Vào giao diện tính lương <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></span>
                 </button>
 
@@ -112,8 +111,8 @@
                     <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:bg-emerald-600 transition-colors">
                         <i class="fa-solid fa-user-shield text-2xl text-emerald-600 group-hover:text-white transition-colors"></i>
                     </div>
-                    <h3 class="text-xl font-black text-slate-800 mb-2">Nhân Viên Tra Cứu</h3>
-                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Tìm nhanh theo tên cá nhân đã được đồng bộ để tự đối soát lỗi phạt và tiền lương KPI nhận thực tế.</p>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Nhân Sự Tra Cứu</h3>
+                    <p class="text-sm text-slate-400 font-semibold mb-6 leading-relaxed">Tìm nhanh theo tên cá nhân / Giám sát đã được đồng bộ để tự đối soát lỗi phạt và tiền lương KPI nhận thực tế.</p>
                     <span class="text-emerald-600 font-bold text-sm flex items-center gap-1">Tra cứu điểm cá nhân <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i></span>
                 </button>
             </div>
@@ -131,12 +130,15 @@
         <div id="screen-accounting" class="screen w-full">
             
             <!-- SUB-TABS KẾ TOÁN -->
-            <div class="flex border-b border-slate-200 mb-6">
-                <button onclick="switchAccountingTab('worksheet')" id="subtab-btn-worksheet" class="px-6 py-3 font-black text-sm border-b-2 border-indigo-600 text-indigo-600 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-keyboard"></i> 1. Xử Lý & Tính Toán KPI Chi Tiết
+            <div class="flex flex-wrap border-b border-slate-200 mb-6">
+                <button onclick="switchAccountingTab('worksheet')" id="subtab-btn-worksheet" class="px-4 md:px-6 py-3 font-black text-sm border-b-2 border-indigo-600 text-indigo-600 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-keyboard"></i> 1. Xử Lý Lương Nhân Viên
                 </button>
-                <button onclick="switchAccountingTab('report')" id="subtab-btn-report" class="px-6 py-3 font-black text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-file-invoice-dollar"></i> 2. Bảng Tổng Hợp Lương KPI Tháng
+                <button onclick="switchAccountingTab('report')" id="subtab-btn-report" class="px-4 md:px-6 py-3 font-black text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> 2. Bảng Lương Tổng Hợp
+                </button>
+                <button onclick="switchAccountingTab('supervisor')" id="subtab-btn-supervisor" class="px-4 md:px-6 py-3 font-black text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-user-tie"></i> 3. Tính Lương Giám Sát
                 </button>
             </div>
 
@@ -170,7 +172,7 @@
                         </div>
                         <!-- Trạng thái tính lương -->
                         <div class="flex items-end pb-1.5">
-                            <span id="work-calc-status" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-slate-100 text-slate-500 border border-slate-200">
+                            <span id="work-calc-status" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-slate-100 text-slate-500 border border-slate-200 h-[42px] mt-auto">
                                 <i class="fa-solid fa-circle-question mr-1.5"></i> Chưa tính toán kỳ này
                             </span>
                         </div>
@@ -272,7 +274,7 @@
                         <table class="w-full text-xs text-left text-slate-600">
                             <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b border-slate-200">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4 font-black">Nhân viên</th>
+                                    <th scope="col" class="px-6 py-4 font-black">Nhân viên / Giám Sát</th>
                                     <th scope="col" class="px-6 py-4 font-black">Vị trí</th>
                                     <th scope="col" class="px-6 py-4 font-black text-center">Định mức KPI chuẩn</th>
                                     <th scope="col" class="px-6 py-4 font-black text-center">Thưởng Upsell bia</th>
@@ -285,6 +287,60 @@
                                 <!-- JS Inject -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 3: TÍNH LƯƠNG GIÁM SÁT -->
+            <div id="subtab-supervisor" class="hidden space-y-6">
+                <!-- BỘ CHỌN GIÁM SÁT -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+                        <h3 class="font-black text-xs text-indigo-800 uppercase tracking-wider"><i class="fa-solid fa-user-tie mr-1"></i> Bảng Lương Giám Sát (Cross-Check Logic)</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Nhập tên Giám sát / Trưởng ca</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="sup-name-input" placeholder="Ví dụ: Nguyễn Văn A" class="bg-white border border-slate-200 text-sm font-bold rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 flex-grow">
+                                <button onclick="loadSupervisorWorksheet()" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-xl font-bold text-xs shrink-0 transition-colors shadow-sm">Kiểm tra & Tải</button>
+                            </div>
+                        </div>
+                        <div class="flex items-end pb-0.5">
+                            <span id="sup-calc-status" class="inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-slate-100 text-slate-500 border border-slate-200 h-[46px]">
+                                <i class="fa-solid fa-circle-question mr-1.5"></i> Vui lòng nhập tên để tải dữ liệu
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THỐNG KÊ CROSS-CHECK TỰ ĐỘNG -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="sup-auto-metrics">
+                    <!-- Inject PV, RN, TV net scores -->
+                </div>
+
+                <!-- NHẬP LỖI CÁ NHÂN -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col">
+                    <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                        <h3 class="font-black text-sm text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-indigo-500"></i> Áp Điểm Trừ KPI Cá Nhân Giám Sát
+                        </h3>
+                    </div>
+                    
+                    <!-- Form nhập liệu tay -->
+                    <div class="space-y-4" id="sup-manual-entries">
+                        <!-- Inject Chuyen Can, Ky Luat, Dieu Phoi -->
+                    </div>
+                    
+                    <!-- Tổng cộng & Lưu -->
+                    <div class="mt-6 pt-5 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tổng lương KPI GS thực nhận</p>
+                            <p class="text-3xl font-black text-slate-800" id="sup-total-money">0 đ <span class="text-xl text-slate-300 font-bold ml-1 tracking-normal">/ 4.500.000 đ</span></p>
+                        </div>
+                        <button onclick="saveSupervisorWorksheet()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 px-8 rounded-2xl shadow-lg shadow-indigo-100 transition-all active:scale-95 text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i> Lưu Bảng Lương Giám Sát
+                        </button>
                     </div>
                 </div>
             </div>
@@ -311,63 +367,7 @@
 
             <!-- Kết quả chi tiết của cá nhân (Mặc định ẩn) -->
             <div id="emp-result-container" class="hidden space-y-6">
-                <!-- Thẻ điểm -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center">
-                        <div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mr-4 text-slate-500"><i class="fa-solid fa-clipboard-list"></i></div>
-                        <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase">Hợp đồng vị trí</p>
-                            <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-dept">N/A</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl p-5 border border-amber-100 shadow-sm flex items-center" id="emp-upsell-stat-card">
-                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mr-4 text-amber-500"><i class="fa-solid fa-beer-mug-empty"></i></div>
-                        <div>
-                            <p class="text-[10px] font-black text-amber-400 uppercase">Thưởng Upsell Bia</p>
-                            <p class="text-xs font-black text-slate-800 mt-1" id="emp-badge-upsell">0 đ</p>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-5 border border-emerald-600 shadow-md flex items-center text-white relative overflow-hidden">
-                        <div class="absolute right-2 text-5xl opacity-10"><i class="fa-solid fa-money-bill-wave"></i></div>
-                        <div class="relative z-10">
-                            <p class="text-[10px] font-bold text-emerald-100 uppercase">Tổng tiền KPI thực nhận</p>
-                            <p class="text-xl font-black" id="emp-total-payout">0 đ</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bảng chi tiết từng chỉ tiêu -->
-                <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
-                    <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-indigo-500"></i> Bảng đối soát chi tiết từng chỉ mục KPI thành phần
-                    </h3>
-                    <div class="table-container overflow-x-auto">
-                        <table class="w-full text-xs text-left text-slate-600">
-                            <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th scope="col" class="px-4 py-3 font-black">Chỉ mục KPI</th>
-                                    <th scope="col" class="px-4 py-3 font-black text-center">Định mức chuẩn</th>
-                                    <th scope="col" class="px-4 py-3 font-black text-center">Số lỗi áp</th>
-                                    <th scope="col" class="px-4 py-3 font-black text-center">% KPI đạt</th>
-                                    <th scope="col" class="px-4 py-3 font-black text-right">Tiền thực nhận</th>
-                                </tr>
-                            </thead>
-                            <tbody id="emp-kpi-tbody" class="divide-y divide-slate-100">
-                                <!-- JS Inject -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Lịch sử vi phạm (Giúp rà soát minh bạch) -->
-                <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
-                    <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-receipt text-slate-400"></i> Biên bản ca lỗi ghi nhận từ Sổ Giám Sát
-                    </h3>
-                    <div id="emp-raw-logs-list" class="space-y-2">
-                        <!-- Danh sách lỗi -->
-                    </div>
-                </div>
+                <!-- Data inject -->
             </div>
 
         </div>
@@ -472,13 +472,12 @@
 
 <script>
     // --- 0. BẢO MẬT GIAO DIỆN KẾ TOÁN ---
-    const ACCOUNTING_PASSWORD = "123456"; // Mật mã mặc định để vào giao diện Kế Toán
+    const ACCOUNTING_PASSWORD = "123456"; 
 
     function openPasswordModal() {
         const modal = document.getElementById('password-modal');
         const box = document.getElementById('password-modal-box');
         
-        // Xoá trắng input & ẩn thông báo lỗi mỗi khi mở
         const inputField = document.getElementById('accounting-password-input');
         inputField.value = '';
         inputField.classList.remove('border-rose-300', 'focus:border-rose-500', 'focus:ring-rose-500');
@@ -506,7 +505,7 @@
         const inputField = document.getElementById('accounting-password-input');
         if (inputField.value === ACCOUNTING_PASSWORD) {
             closePasswordModal();
-            initAccounting(); // Chỉ khởi tạo và mở giao diện nếu nhập đúng
+            initAccounting(); 
         } else {
             document.getElementById('password-error-msg').classList.remove('hidden');
             inputField.classList.add('border-rose-300', 'focus:border-rose-500', 'focus:ring-rose-500');
@@ -526,11 +525,11 @@
             hasUpsell: true,
             upsellMax: 300000,
             items: [
-                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000 },
-                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 200000 },
-                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 300000 },
-                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 300000 },
-                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 300000 }
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000, type: 'manual' },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 200000, type: 'manual' },
+                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 300000, type: 'manual' },
+                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 300000, type: 'manual' },
+                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 300000, type: 'manual' }
             ]
         },
         'PV_PT': {
@@ -538,39 +537,51 @@
             hasUpsell: true,
             upsellMax: 150000,
             items: [
-                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 150000 },
-                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 100000 },
-                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 150000 },
-                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 150000 },
-                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 150000 }
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 150000, type: 'manual' },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 100000, type: 'manual' },
+                { id: 'chat_luong', name: 'Chất lượng phục vụ', maxMoney: 150000, type: 'manual' },
+                { id: 've_sinh', name: 'Vệ sinh & CCDC', maxMoney: 150000, type: 'manual' },
+                { id: 'tac_phong', name: 'Tác phong làm việc', maxMoney: 150000, type: 'manual' }
             ]
         },
         'RN': {
             name: 'Runner (Tiếp thực)',
             hasUpsell: false,
             items: [
-                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000 },
-                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 300000 },
-                { id: 'van_hanh', name: 'Vận hành Bàn tiếp thực & Kho bia', maxMoney: 500000 },
-                { id: 'nuoc_cham', name: 'Nước chấm & Peak Hour', maxMoney: 500000 }
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 300000, type: 'manual' },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Chấm công', maxMoney: 300000, type: 'manual' },
+                { id: 'van_hanh', name: 'Vận hành Bàn tiếp thực & Kho bia', maxMoney: 500000, type: 'manual' },
+                { id: 'nuoc_cham', name: 'Nước chấm & Peak Hour', maxMoney: 500000, type: 'manual' }
             ]
         },
         'TV': {
             name: 'Tạp Vụ (Housekeeping)',
             hasUpsell: false,
             items: [
-                { id: 've_sinh_sanh', name: 'Vệ sinh sảnh, lối đi & điểm rơi', maxMoney: 600000 },
-                { id: 'toilet', name: 'Toilet khách & khu rửa tay', maxMoney: 450000 },
-                { id: 'khu_giat', name: 'Khu giặt rửa, khăn & dụng cụ', maxMoney: 350000 },
-                { id: 'rac_thai', name: 'Rác thải & Hậu cần', maxMoney: 250000 },
-                { id: 'suat_an', name: 'Suất ăn nhân viên', maxMoney: 250000 },
-                { id: 'cham_cong', name: 'Chấm công & Kỷ luật', maxMoney: 300000 },
-                { id: 'tac_phong', name: 'Tác phong & Phối hợp', maxMoney: 300000 }
+                { id: 've_sinh_sanh', name: 'Vệ sinh sảnh, lối đi & điểm rơi', maxMoney: 600000, type: 'manual' },
+                { id: 'toilet', name: 'Toilet khách & khu rửa tay', maxMoney: 450000, type: 'manual' },
+                { id: 'khu_giat', name: 'Khu giặt rửa, khăn & dụng cụ', maxMoney: 350000, type: 'manual' },
+                { id: 'rac_thai', name: 'Rác thải & Hậu cần', maxMoney: 250000, type: 'manual' },
+                { id: 'suat_an', name: 'Suất ăn nhân viên', maxMoney: 250000, type: 'manual' },
+                { id: 'cham_cong', name: 'Chấm công & Kỷ luật', maxMoney: 300000, type: 'manual' },
+                { id: 'tac_phong', name: 'Tác phong & Phối hợp', maxMoney: 300000, type: 'manual' }
+            ]
+        },
+        'GS': {
+            name: 'Giám Sát Nhà Hàng',
+            hasUpsell: false,
+            items: [
+                { id: 'chuyen_can', name: 'KPI Chuyên cần', maxMoney: 500000, type: 'manual' },
+                { id: 'ky_luat', name: 'KPI Kỷ luật & Hiện diện', maxMoney: 500000, type: 'manual' },
+                { id: 'kiem_soat_pv', name: 'Kiểm soát Phục vụ', maxMoney: 1200000, type: 'auto', autoDept: 'PV' },
+                { id: 'kiem_soat_rn', name: 'Kiểm soát Runner', maxMoney: 1000000, type: 'auto', autoDept: 'RN' },
+                { id: 'kiem_soat_tv', name: 'Kiểm soát Tạp vụ', maxMoney: 1000000, type: 'auto', autoDept: 'TV' },
+                { id: 'dieu_phoi', name: 'Điều phối ca & Sự cố', maxMoney: 300000, type: 'manual' }
             ]
         }
     };
 
-    // --- 2. BIỂU THANG ĐIỂM KPI (ÁP DỤNG ĐỘC LẬP THEO QUY CHUẨN ẢNH) ---
+    // --- 2. BIỂU THANG ĐIỂM KPI (DÀNH CHO NHÂN VIÊN & GS MANUAL) ---
     function getKpiPercent(errors) {
         if (errors === '' || errors === undefined || errors === null) return 100;
         let errCount = parseInt(errors) || 0;
@@ -579,6 +590,35 @@
         if (errCount <= 5) return 70;
         if (errCount <= 7) return 50;
         if (errCount <= 9) return 30;
+        return 0;
+    }
+
+    // --- BIỂU THANG ĐIỂM GIÁM SÁT (TỰ ĐỘNG THEO ĐIỂM RÒNG TỪNG BỘ PHẬN) ---
+    function getGSPct(dept, net) {
+        if (dept === 'PV') {
+            if (net >= 36) return 100;
+            if (net >= 33) return 90;
+            if (net >= 28) return 70;
+            if (net >= 22) return 50;
+            if (net >= 16) return 30;
+            return 0;
+        }
+        if (dept === 'RN') {
+            if (net >= 20) return 100;
+            if (net >= 18) return 90;
+            if (net >= 15) return 70;
+            if (net >= 12) return 50;
+            if (net >= 8) return 30;
+            return 0;
+        }
+        if (dept === 'TV') {
+            if (net >= 33) return 100;
+            if (net >= 30) return 90;
+            if (net >= 25) return 70;
+            if (net >= 20) return 50;
+            if (net >= 14) return 30;
+            return 0;
+        }
         return 0;
     }
 
@@ -595,7 +635,6 @@
     // --- BỘ PHÂN TÍCH HẠNG MỤC KPI TỰ ĐỘNG ---
     function extractKpiId(log, deptCode) {
         let vals = Object.values(log);
-        // Lấy Hạng mục KPI từ Cột F (Index 5)
         let categoryText = vals.length > 5 ? String(vals[5]) : (log['Hạng mục KPI'] || log['hạng mục kpi'] || log['kpi'] || log['KPI'] || '');
         if (!categoryText && log.note && typeof log.note === 'string') {
             let match = log.note.match(/\[(.*?)\]/);
@@ -604,7 +643,6 @@
         }
         categoryText = categoryText.toLowerCase();
 
-        // Mapping từ khóa khớp với ID của scheme
         if (deptCode.startsWith('PV')) {
             if (categoryText.includes('chuyên cần')) return 'chuyen_can';
             if (categoryText.includes('kỷ luật') || categoryText.includes('chấm công') || categoryText.includes('trễ')) return 'ky_luat';
@@ -630,19 +668,15 @@
         return null;
     }
 
-    // Hàm bóc tách giao diện thẻ KPI và Nội dung mô tả
     function parseLogDetails(log) {
         let vals = Object.values(log);
         
-        // 1. Cột C (Index 2): Lấy Loại lỗi (A, B, C)
         let errorType = vals.length > 2 ? String(vals[2]).trim().toUpperCase() : (log.type || 'A');
         if (!['A', 'B', 'C'].includes(errorType)) errorType = 'A'; 
 
         let kpiCategory = '';
         let description = '';
 
-        // 2. Đọc cột F (Index 5) hoặc log.note
-        // Dữ liệu từ Sổ Giám Sát đẩy sang thường có dạng gộp: "[Hạng mục KPI] - Mô tả sự việc"
         let noteField = vals.length > 5 ? String(vals[5]).trim() : (log.note || '');
         
         if (noteField.startsWith('[')) {
@@ -656,18 +690,13 @@
             description = noteField;
         }
 
-        // 3. Đọc cột G (Index 6) nếu đã tự tách cột trên Google Sheet
-        // Cần loại bỏ nhầm lẫn với cột "Đã trừ KPI" (chứa true/false, hoặc Có/Không)
         if (vals.length > 6) {
             let colGStr = String(vals[6]).trim();
             let lowerColG = colGStr.toLowerCase();
             
             if (colGStr !== '' && !['true', 'false', 'có', 'không', 'yes', 'no'].includes(lowerColG)) {
                 description = colGStr;
-                // Nếu Sheet đã tách cột rõ ràng, thì Cột F chính là KPI
-                if (!noteField.startsWith('[')) {
-                    kpiCategory = noteField;
-                }
+                if (!noteField.startsWith('[')) kpiCategory = noteField;
             }
         }
         
@@ -681,11 +710,10 @@
         };
     }
 
-    // Hàm format thời gian theo chuẩn: Thứ X - DD/MM/YYYY - HH:MM:SS
     function formatLogTime(rawTime) {
         if (!rawTime) return 'N/A';
         const d = new Date(rawTime);
-        if (isNaN(d.getTime())) return String(rawTime); // Fallback nếu định dạng không phải ngày tháng
+        if (isNaN(d.getTime())) return String(rawTime);
 
         const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
         const dayOfWeek = days[d.getDay()];
@@ -701,26 +729,44 @@
         return `${dayOfWeek} - ${dd}/${mm}/${yyyy} - ${hh}:${min}:${ss}`;
     }
 
+    // --- TÍNH ĐIỂM RÒNG CHUNG CHO GIÁM SÁT ---
+    function getGSNetScores() {
+        let scores = { 'PV': { net: 0, a:0, b:0, c:0 }, 'RN': { net: 0, a:0, b:0, c:0 }, 'TV': { net: 0, a:0, b:0, c:0 } };
+        rawLogs.forEach(log => {
+            let parsedLog = parseLogDetails(log);
+            let type = parsedLog.type;
+            
+            let deptField = log.dept || log.department || (Object.values(log).length > 1 ? Object.values(log)[1] : '');
+            let deptCode = normalizeDeptCode(deptField);
+            let baseDept = deptCode.startsWith('PV') ? 'PV' : deptCode;
+
+            if (scores[baseDept]) {
+                if(type === 'A') { scores[baseDept].a++; scores[baseDept].net += 1; }
+                if(type === 'B') { scores[baseDept].b++; scores[baseDept].net -= 2; }
+                if(type === 'C') { scores[baseDept].c++; scores[baseDept].net -= 3; }
+            }
+        });
+        return scores;
+    }
+
     // --- 4. GLOBAL STATE & LINK GOOGLE SHEETS ---
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl66O1nJmEs_6kBKoAxsjughNhy-NcL4m9rvu9v0ksldUJX_3woStWUqzyBFb0LqfI/exec"; 
 
-    let rawLogs = [];             // Dữ liệu thô các dòng lỗi kéo về từ google sheets
-    let employeeNameList = [];    // Danh sách toàn bộ tên nhân viên tự bóc tách không trùng
-    let localPayrollResults = {}; // Bảng tổng hợp duyệt lương đã tính toán (Lưu LocalStorage)
+    let rawLogs = [];             
+    let employeeNameList = [];    
+    let localPayrollResults = {}; 
     let activeAccountingTab = 'worksheet';
     let currentReportFilter = 'ALL';
 
-    // Bóc tách chuẩn hóa tên bộ phận kéo về từ Sheets để khớp với Schema
     function normalizeDeptCode(deptString) {
         if (!deptString) return 'PV_FT';
         let d = deptString.toUpperCase().trim();
         if (d.includes('PHỤC VỤ') || d === 'PV' || d.includes('SERVING')) return 'PV_FT';
         if (d.includes('RUNNER') || d === 'RN' || d.includes('TIẾP THỰC')) return 'RN';
         if (d.includes('TẠP VỤ') || d === 'TV' || d.includes('HOUSEKEEPING')) return 'TV';
-        return 'PV_FT'; // Mặc định ban đầu
+        return 'PV_FT'; 
     }
 
-    // --- 5. TỰ ĐỘNG ĐỒNG BỘ DỮ LIỆU KHI TẢI TRANG ---
     function autoInitOnLoad() {
         document.getElementById('display-api-url').innerText = GOOGLE_SCRIPT_URL;
         fetchData();
@@ -728,7 +774,6 @@
 
     async function forceReSync() {
         await fetchData();
-        // Cập nhật lại dropdown danh sách nhân viên
         const select = document.getElementById('work-emp-select');
         let currentSel = select.value;
         
@@ -742,7 +787,6 @@
         }
     }
 
-    // --- 6. HÀM ĐỒNG BỘ CHÍNH ---
     async function fetchData() {
         document.getElementById('loader').classList.remove('hidden');
         document.getElementById('screen-accounting').classList.add('hidden');
@@ -756,7 +800,6 @@
             const response = await fetch(GOOGLE_SCRIPT_URL);
             rawLogs = await response.json();
             
-            // Lưu lại bộ nhớ cache của trình duyệt để dùng dự phòng offline
             localStorage.setItem('gs_logs_local_2026', JSON.stringify(rawLogs));
             
             statusText.innerText = "Đồng bộ dữ liệu Google Sheets thành công!";
@@ -769,31 +812,29 @@
             timeText.innerText = "Lần cuối: Không xác định";
         }
 
-        // Bóc tách danh sách nhân sự không trùng lặp và chuẩn hóa
+        localPayrollResults = JSON.parse(localStorage.getItem('payroll_kpi_results_v3')) || {};
+
         let namesMap = {};
         rawLogs.forEach(log => {
             let nameField = log.empName || log.employeeName || '';
             if (!nameField) return;
 
-            // Chuẩn hóa tên chữ hoa đầu từ đẹp đẽ
             let rawName = nameField.trim();
             let nameParts = rawName.split(/\s+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
             let empName = nameParts.join(' ');
-            
-            // Ánh xạ bộ phận tạm thời từ Sổ kiểm soát
-            let deptField = log.dept || log.department || '';
-            namesMap[empName] = normalizeDeptCode(deptField);
+            namesMap[empName] = normalizeDeptCode(log.dept || log.department || '');
         });
 
-        employeeNameList = Object.keys(namesMap).sort();
-
-        // Tải bảng kết quả duyệt lương lịch sử
-        localPayrollResults = JSON.parse(localStorage.getItem('payroll_kpi_results_v3')) || {};
+        employeeNameList = Object.keys(namesMap);
+        // Bổ sung thêm những người đã có bảng lương lưu (Ví dụ Giám sát) vào danh sách tìm kiếm
+        Object.keys(localPayrollResults).forEach(name => {
+            if (!employeeNameList.includes(name)) employeeNameList.push(name);
+        });
+        employeeNameList.sort();
 
         document.getElementById('loader').classList.add('hidden');
     }
 
-    // --- 7. ĐIỀU HƯỚNG GIAO DIỆN ---
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
@@ -830,25 +871,21 @@
         activeAccountingTab = tabName;
         document.getElementById('subtab-worksheet').classList.add('hidden');
         document.getElementById('subtab-report').classList.add('hidden');
+        document.getElementById('subtab-supervisor').classList.add('hidden');
         
-        document.getElementById('subtab-btn-worksheet').classList.remove('border-indigo-600', 'text-indigo-600');
-        document.getElementById('subtab-btn-worksheet').classList.add('border-transparent', 'text-slate-500');
-        document.getElementById('subtab-btn-report').classList.remove('border-indigo-600', 'text-indigo-600');
-        document.getElementById('subtab-btn-report').classList.add('border-transparent', 'text-slate-500');
+        document.querySelectorAll('[id^="subtab-btn-"]').forEach(btn => {
+            btn.classList.remove('border-indigo-600', 'text-indigo-600');
+            btn.classList.add('border-transparent', 'text-slate-500');
+        });
 
-        if (tabName === 'worksheet') {
-            document.getElementById('subtab-worksheet').classList.remove('hidden');
-            document.getElementById('subtab-btn-worksheet').classList.add('border-indigo-600', 'text-indigo-600');
-            document.getElementById('subtab-btn-worksheet').classList.remove('border-transparent', 'text-slate-500');
-        } else {
-            document.getElementById('subtab-report').classList.remove('hidden');
-            document.getElementById('subtab-btn-report').classList.add('border-indigo-600', 'text-indigo-600');
-            document.getElementById('subtab-btn-report').classList.remove('border-transparent', 'text-slate-500');
-            renderReportTable();
-        }
+        document.getElementById('subtab-' + tabName).classList.remove('hidden');
+        document.getElementById('subtab-btn-' + tabName).classList.add('border-indigo-600', 'text-indigo-600');
+        document.getElementById('subtab-btn-' + tabName).classList.remove('border-transparent', 'text-slate-500');
+
+        if (tabName === 'report') renderReportTable();
     }
 
-    // --- 8. TÁC NGHIỆP TRÊN WORKSHEET (KẾ TOÁN) ---
+    // --- 8. TÁC NGHIỆP TRÊN WORKSHEET (KẾ TOÁN - NHÂN VIÊN) ---
     let currentWorkEmployee = '';
     let currentWorkDept = 'PV_FT';
 
@@ -856,10 +893,10 @@
         currentWorkEmployee = document.getElementById('work-emp-select').value;
         if (!currentWorkEmployee) return;
 
-        // Dự đoán bộ phận mặc định dựa trên dữ liệu Google Sheet hoặc lịch sử tính toán trước đó
         let savedResult = localPayrollResults[currentWorkEmployee];
         if (savedResult) {
             currentWorkDept = savedResult.deptCode;
+            if(currentWorkDept === 'GS') currentWorkDept = 'PV_FT'; // Nếu chọn lộn GS ở tab NV
         } else {
             let log = rawLogs.find(l => {
                 let nameField = l.empName || l.employeeName || '';
@@ -871,8 +908,6 @@
         }
 
         document.getElementById('work-dept-select').value = currentWorkDept;
-        
-        // Load cấu hình của nhân sự đó lên worksheet
         renderWorksheetData();
     }
 
@@ -884,18 +919,16 @@
     function renderWorksheetData() {
         if (!currentWorkEmployee) return;
 
-        // Cập nhật trạng thái
         const statusEl = document.getElementById('work-calc-status');
         const savedResult = localPayrollResults[currentWorkEmployee];
         if (savedResult && savedResult.deptCode === currentWorkDept) {
-            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200";
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200 h-[42px] mt-auto";
             statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Đã phê duyệt tính lương';
         } else {
-            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-amber-100 text-amber-700 border border-amber-200";
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-amber-100 text-amber-700 border border-amber-200 h-[42px] mt-auto";
             statusEl.innerHTML = '<i class="fa-solid fa-clock mr-1.5"></i> Đang chỉnh sửa / Chưa lưu';
         }
 
-        // Bày các ca lỗi chi tiết từ Google Sheet của nhân viên này ra để kế toán đối soát (Cột Trái)
         const logsContainer = document.getElementById('work-raw-logs-list');
         logsContainer.innerHTML = '';
         
@@ -919,7 +952,7 @@
                 
                 let vals = Object.values(log);
                 let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
-                timeStr = formatLogTime(timeStr); // Format lại ngày giờ
+                timeStr = formatLogTime(timeStr);
                 
                 logsContainer.innerHTML += `
                     <div class="p-3 bg-slate-50/80 rounded-xl border border-slate-100 text-xs flex flex-col gap-1.5">
@@ -936,12 +969,10 @@
             });
         }
 
-        // Tạo các ô nhập KPI chuẩn cho vị trí được chọn (Cột Phải)
         const scheme = DEPT_KPI_SCHEMES[currentWorkDept];
         const entriesBox = document.getElementById('work-kpi-entries-box');
         entriesBox.innerHTML = '';
 
-        // Tự động phân tích số lỗi từ ca cho từng hạng mục
         let autoErrors = {};
         matchingLogs.forEach(log => {
             let kpiId = extractKpiId(log, currentWorkDept);
@@ -959,12 +990,11 @@
             if (storedValues) {
                 val = storedValues[item.id] !== undefined ? storedValues[item.id] : 0;
                 let autoVal = autoErrors[item.id] || 0;
-                // Nếu số liệu lưu trữ khác với máy tự đếm, hiển thị tooltip cảnh báo
                 if (val !== autoVal) {
                     hintHtml = `<span class="text-[9px] text-amber-500 font-bold ml-1.5 cursor-help" title="Phần mềm đếm được ${autoVal} lỗi từ Sổ Giám Sát. Bạn có thể tự sửa đổi."><i class="fa-solid fa-circle-exclamation"></i> Sổ báo: ${autoVal}</span>`;
                 }
             } else {
-                val = autoErrors[item.id] || 0; // Tự động điền số đếm được nếu Kế toán chưa lưu bảng
+                val = autoErrors[item.id] || 0; 
             }
 
             entriesBox.innerHTML += `
@@ -985,7 +1015,6 @@
             `;
         });
 
-        // Xử lý Upsell bia
         const upsellBox = document.getElementById('work-upsell-box');
         if (scheme.hasUpsell) {
             upsellBox.classList.remove('hidden');
@@ -1111,6 +1140,207 @@
         alert(`Lưu kết quả duyệt lương thành công cho nhân viên: ${currentWorkEmployee}`);
     }
 
+    // --- TÁC NGHIỆP TRÊN WORKSHEET GIÁM SÁT ---
+    let currentSupName = '';
+    let currentSupScores = null;
+
+    function loadSupervisorWorksheet() {
+        currentSupName = document.getElementById('sup-name-input').value.trim();
+        if (!currentSupName) { alert('Vui lòng nhập Tên Giám sát / Trưởng ca!'); return; }
+
+        currentSupScores = getGSNetScores();
+        let savedResult = localPayrollResults[currentSupName];
+        
+        let statusEl = document.getElementById('sup-calc-status');
+        if (savedResult && savedResult.deptCode === 'GS') {
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-emerald-100 text-emerald-700 border border-emerald-200 h-[46px]";
+            statusEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1.5"></i> Đã phê duyệt lương GS';
+        } else {
+            statusEl.className = "inline-flex items-center px-3 py-2 rounded-xl text-xs font-black bg-amber-100 text-amber-700 border border-amber-200 h-[46px]";
+            statusEl.innerHTML = '<i class="fa-solid fa-clock mr-1.5"></i> Đang chỉnh sửa / Chưa lưu';
+        }
+
+        let pctPV = getGSPct('PV', currentSupScores.PV.net);
+        let pctRN = getGSPct('RN', currentSupScores.RN.net);
+        let pctTV = getGSPct('TV', currentSupScores.TV.net);
+
+        document.getElementById('sup-auto-metrics').innerHTML = `
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 relative overflow-hidden">
+                <div class="absolute right-0 bottom-0 text-5xl opacity-5"><i class="fa-solid fa-bell-concierge"></i></div>
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-black text-blue-800 text-sm">Kiểm soát Phục Vụ</h4>
+                    <span class="bg-blue-200 text-blue-800 text-[10px] font-black px-2 py-0.5 rounded">MAX: 1.2M</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500 mb-3">
+                    <span class="text-emerald-600" title="Lỗi GS tự phát hiện">A: ${currentSupScores.PV.a}</span> |
+                    <span class="text-orange-600" title="Lỗi Audit nhắc">B: ${currentSupScores.PV.b}</span> |
+                    <span class="text-rose-600" title="Lỗi Nghiêm trọng">C: ${currentSupScores.PV.c}</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Điểm Ròng</p>
+                        <p class="text-2xl font-black text-blue-700">${currentSupScores.PV.net}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Đạt KPI</p>
+                        <p class="text-lg font-black ${pctPV > 0 ? 'text-emerald-600' : 'text-rose-500'}">${pctPV}%</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-orange-50 border border-orange-100 rounded-xl p-4 relative overflow-hidden">
+                <div class="absolute right-0 bottom-0 text-5xl opacity-5"><i class="fa-solid fa-person-running"></i></div>
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-black text-orange-800 text-sm">Kiểm soát Runner</h4>
+                    <span class="bg-orange-200 text-orange-800 text-[10px] font-black px-2 py-0.5 rounded">MAX: 1.0M</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500 mb-3">
+                    <span class="text-emerald-600">A: ${currentSupScores.RN.a}</span> |
+                    <span class="text-orange-600">B: ${currentSupScores.RN.b}</span> |
+                    <span class="text-rose-600">C: ${currentSupScores.RN.c}</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Điểm Ròng</p>
+                        <p class="text-2xl font-black text-orange-700">${currentSupScores.RN.net}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Đạt KPI</p>
+                        <p class="text-lg font-black ${pctRN > 0 ? 'text-emerald-600' : 'text-rose-500'}">${pctRN}%</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 relative overflow-hidden">
+                <div class="absolute right-0 bottom-0 text-5xl opacity-5"><i class="fa-solid fa-broom"></i></div>
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="font-black text-emerald-800 text-sm">Kiểm soát Tạp Vụ</h4>
+                    <span class="bg-emerald-200 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded">MAX: 1.0M</span>
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-bold text-slate-500 mb-3">
+                    <span class="text-emerald-600">A: ${currentSupScores.TV.a}</span> |
+                    <span class="text-orange-600">B: ${currentSupScores.TV.b}</span> |
+                    <span class="text-rose-600">C: ${currentSupScores.TV.c}</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Điểm Ròng</p>
+                        <p class="text-2xl font-black text-emerald-700">${currentSupScores.TV.net}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Đạt KPI</p>
+                        <p class="text-lg font-black ${pctTV > 0 ? 'text-emerald-600' : 'text-rose-500'}">${pctTV}%</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const scheme = DEPT_KPI_SCHEMES['GS'];
+        const entriesBox = document.getElementById('sup-manual-entries');
+        entriesBox.innerHTML = '';
+
+        scheme.items.forEach(item => {
+            if (item.type === 'manual') {
+                let val = (savedResult && savedResult.deptCode === 'GS' && savedResult.kpiErrors) ? (savedResult.kpiErrors[item.id] || 0) : 0;
+                entriesBox.innerHTML += `
+                    <div class="grid grid-cols-12 gap-3 items-center p-3 bg-slate-50 hover:bg-slate-100/70 rounded-xl border border-slate-100 transition-colors">
+                        <div class="col-span-6">
+                            <p class="text-xs font-black text-slate-800">${item.name}</p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-0.5">Định mức chuẩn: ${formatMoney(item.maxMoney)}</p>
+                        </div>
+                        <div class="col-span-3">
+                            <label class="block text-[9px] font-black text-slate-400 mb-0.5">Số lỗi phạt GS</label>
+                            <input type="number" id="sup-input-err-${item.id}" min="0" value="${val}" oninput="calculateSupervisorWorksheet()" class="w-full bg-white border border-slate-200 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg p-1.5 text-xs font-black text-center text-slate-700">
+                        </div>
+                        <div class="col-span-3 text-right">
+                            <p class="text-[9px] font-black text-slate-400">Đạt (% KPI) / Nhận</p>
+                            <p class="text-xs font-extrabold text-indigo-600 mt-1" id="sup-calc-payout-${item.id}">100% - 0đ</p>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        calculateSupervisorWorksheet();
+    }
+
+    function calculateSupervisorWorksheet() {
+        if (!currentSupName) return;
+
+        const scheme = DEPT_KPI_SCHEMES['GS'];
+        let totalPayout = 0;
+        let totalMax = 0;
+
+        scheme.items.forEach(item => {
+            let pct = 0;
+            let val = 0;
+            
+            if (item.type === 'auto') {
+                val = currentSupScores[item.autoDept].net;
+                pct = getGSPct(item.autoDept, val);
+            } else {
+                const inputEl = document.getElementById(`sup-input-err-${item.id}`);
+                val = inputEl ? parseInt(inputEl.value) || 0 : 0;
+                pct = getKpiPercent(val);
+                
+                const calcEl = document.getElementById(`sup-calc-payout-${item.id}`);
+                if (calcEl) {
+                    let itemPayout = (item.maxMoney * pct) / 100;
+                    calcEl.innerHTML = `<span class="${pct === 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</span> <span class="text-slate-300 mx-1">|</span> <span class="text-slate-800">${formatMoney(itemPayout)}</span>`;
+                }
+            }
+            
+            let payout = (item.maxMoney * pct) / 100;
+            totalPayout += payout;
+            totalMax += item.maxMoney;
+        });
+
+        document.getElementById('sup-total-money').innerHTML = `${formatMoney(totalPayout)} <span class="text-xl text-slate-300 font-bold ml-1 tracking-normal">/ ${formatMoney(totalMax)}</span>`;
+    }
+
+    function saveSupervisorWorksheet() {
+        if (!currentSupName) { alert('Vui lòng nhập tên Giám sát / Trưởng ca và tải dữ liệu trước!'); return; }
+
+        const scheme = DEPT_KPI_SCHEMES['GS'];
+        let kpiErrors = {};
+        let totalKpiMax = 0;
+        let totalPayout = 0;
+
+        scheme.items.forEach(item => {
+            let pct = 0;
+            if (item.type === 'auto') {
+                let netScore = currentSupScores[item.autoDept].net;
+                kpiErrors[item.id] = netScore; 
+                pct = getGSPct(item.autoDept, netScore);
+            } else {
+                const inputEl = document.getElementById(`sup-input-err-${item.id}`);
+                let errors = inputEl ? parseInt(inputEl.value) || 0 : 0;
+                kpiErrors[item.id] = errors;
+                pct = getKpiPercent(errors);
+            }
+            
+            totalPayout += (item.maxMoney * pct) / 100;
+            totalKpiMax += item.maxMoney;
+        });
+
+        localPayrollResults[currentSupName] = {
+            employeeName: currentSupName,
+            deptCode: 'GS',
+            kpiErrors: kpiErrors,
+            upsellRate: 0,
+            upsellMoney: 0,
+            totalPayout: totalPayout,
+            totalKpiMax: totalKpiMax,
+            updatedAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('payroll_kpi_results_v3', JSON.stringify(localPayrollResults));
+
+        loadSupervisorWorksheet();
+        alert(`Lưu Bảng lương KPI thành công cho Giám sát: ${currentSupName}`);
+    }
+
+
     // --- 9. BẢNG TỔNG HỢP LƯƠNG ---
     function setReportFilter(filterVal) {
         currentReportFilter = filterVal;
@@ -1165,8 +1395,8 @@
                     <td class="px-6 py-4 text-right font-black text-indigo-600 text-sm">${payoutText}</td>
                     <td class="px-6 py-4 text-center">${statusBadge}</td>
                     <td class="px-6 py-4 text-center flex gap-1.5 justify-center">
-                        <button onclick="gotoWorksheet('${name}')" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-black text-[10px] transition-colors flex items-center gap-1">
-                            <i class="fa-solid fa-calculator"></i> Tính KPI
+                        <button onclick="${result && result.deptCode === 'GS' ? `gotoSupervisorWorksheet('${name}')` : `gotoWorksheet('${name}')`}" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-black text-[10px] transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-calculator"></i> ${result && result.deptCode === 'GS' ? 'Xem lương GS' : 'Tính KPI'}
                         </button>
                     </td>
                 </tr>
@@ -1180,7 +1410,13 @@
         switchAccountingTab('worksheet');
     }
 
-    // --- 10. TRA CỨU CÁ NHÂN (NHÂN VIÊN) ---
+    function gotoSupervisorWorksheet(supName) {
+        document.getElementById('sup-name-input').value = supName;
+        loadSupervisorWorksheet();
+        switchAccountingTab('supervisor');
+    }
+
+    // --- 10. TRA CỨU CÁ NHÂN (NHÂN VIÊN & GIÁM SÁT) ---
     function renderEmployeeDetails() {
         const name = document.getElementById('emp-select-box').value;
         if (!name) return;
@@ -1201,6 +1437,9 @@
                 </div>`;
             return;
         }
+
+        const isGS = result.deptCode === 'GS';
+        const scheme = DEPT_KPI_SCHEMES[result.deptCode];
 
         container.innerHTML = `
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1237,7 +1476,7 @@
                             <tr>
                                 <th scope="col" class="px-4 py-3 font-black">Chỉ mục KPI</th>
                                 <th scope="col" class="px-4 py-3 font-black text-center">Định mức chuẩn</th>
-                                <th scope="col" class="px-4 py-3 font-black text-center">Số lỗi áp</th>
+                                <th scope="col" class="px-4 py-3 font-black text-center">${isGS ? 'Kết quả / Số lỗi' : 'Số lỗi áp'}</th>
                                 <th scope="col" class="px-4 py-3 font-black text-center">% KPI đạt</th>
                                 <th scope="col" class="px-4 py-3 font-black text-right">Tiền thực nhận</th>
                             </tr>
@@ -1249,7 +1488,7 @@
                 </div>
             </div>
 
-            <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5">
+            <div class="glass-panel rounded-2xl bg-white border border-slate-200 p-5 ${isGS ? 'hidden' : ''}">
                 <h3 class="text-sm font-black text-slate-700 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
                     <i class="fa-solid fa-receipt text-slate-400"></i> Biên bản ca lỗi ghi nhận từ Sổ Giám Sát
                 </h3>
@@ -1258,8 +1497,6 @@
                 </div>
             </div>
         `;
-
-        const scheme = DEPT_KPI_SCHEMES[result.deptCode];
         
         document.getElementById('emp-badge-dept').innerText = scheme.name;
         document.getElementById('emp-total-payout').innerHTML = `${formatMoney(result.totalPayout)} <span class="text-base text-emerald-100/70 font-bold ml-1 tracking-normal">/ ${formatMoney(result.totalKpiMax)}</span>`;
@@ -1271,62 +1508,74 @@
             document.getElementById('emp-badge-upsell').innerText = `${formatMoney(result.upsellMoney)} (${upsellPct}% đạt từ ${result.upsellRate}% DT)`;
         } else {
             upsellCard.classList.add('hidden');
+            // Mở rộng card tổng tiền nếu không có bia
+            upsellCard.nextElementSibling.classList.add('sm:col-span-2');
         }
 
         const tbody = document.getElementById('emp-kpi-tbody');
         tbody.innerHTML = '';
 
         scheme.items.forEach(item => {
-            let errCount = result.kpiErrors[item.id] !== undefined ? result.kpiErrors[item.id] : 0;
-            let pct = getKpiPercent(errCount);
+            let errCountOrNet = result.kpiErrors[item.id] !== undefined ? result.kpiErrors[item.id] : 0;
+            
+            let pct = 0;
+            if (isGS && item.type === 'auto') {
+                pct = getGSPct(item.autoDept, errCountOrNet);
+            } else {
+                pct = getKpiPercent(errCountOrNet);
+            }
+            
             let itemPayout = (item.maxMoney * pct) / 100;
+            let displayError = isGS && item.type === 'auto' ? `<span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-black">${errCountOrNet} điểm ròng</span>` : `${errCountOrNet} lỗi`;
 
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3 font-bold text-slate-800">${item.name}</td>
                     <td class="px-4 py-3 text-center font-semibold text-slate-400">${formatMoney(item.maxMoney)}</td>
-                    <td class="px-4 py-3 text-center font-extrabold text-rose-600 bg-rose-50/40">${errCount} lỗi</td>
+                    <td class="px-4 py-3 text-center font-extrabold text-rose-600">${displayError}</td>
                     <td class="px-4 py-3 text-center font-black ${pct === 100 ? 'text-emerald-600' : 'text-indigo-600'}">${pct}%</td>
                     <td class="px-4 py-3 text-right font-black text-slate-800">${formatMoney(itemPayout)}</td>
                 </tr>
             `;
         });
 
-        const logsList = document.getElementById('emp-raw-logs-list');
-        logsList.innerHTML = '';
+        if (!isGS) {
+            const logsList = document.getElementById('emp-raw-logs-list');
+            logsList.innerHTML = '';
 
-        let matchingLogs = rawLogs.filter(log => {
-            let nameField = log.empName || log.employeeName || '';
-            if (!nameField) return false;
-            return nameField.trim().toUpperCase() === name.toUpperCase();
-        });
-
-        if (matchingLogs.length === 0) {
-            logsList.innerHTML = `<p class="text-slate-400 italic text-xs py-4 text-center">Không có lỗi ca nào từ sổ giám sát.</p>`;
-        } else {
-            matchingLogs.forEach(log => {
-                let parsedLog = parseLogDetails(log);
-                let typeClass = parsedLog.type === 'A' ? 'bg-amber-100 text-amber-700' : (parsedLog.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
-                
-                let vals = Object.values(log);
-                let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
-                timeStr = formatLogTime(timeStr); // Format lại ngày giờ
-                
-                logsList.innerHTML += `
-                    <div class="flex items-start p-3 bg-slate-50/60 rounded-xl border border-slate-100 text-xs">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mr-3 text-xs font-black ${typeClass}">
-                            ${parsedLog.type}
-                        </div>
-                        <div class="flex-grow">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded text-[9px] uppercase tracking-wide border border-indigo-100">${parsedLog.kpi}</span>
-                                <span class="text-[9px] text-slate-400 font-bold">${timeStr}</span>
-                            </div>
-                            <p class="font-semibold text-slate-600 text-[13px] mt-1">${parsedLog.desc}</p>
-                        </div>
-                    </div>
-                `;
+            let matchingLogs = rawLogs.filter(log => {
+                let nameField = log.empName || log.employeeName || '';
+                if (!nameField) return false;
+                return nameField.trim().toUpperCase() === name.toUpperCase();
             });
+
+            if (matchingLogs.length === 0) {
+                logsList.innerHTML = `<p class="text-slate-400 italic text-xs py-4 text-center">Không có lỗi ca nào từ sổ giám sát.</p>`;
+            } else {
+                matchingLogs.forEach(log => {
+                    let parsedLog = parseLogDetails(log);
+                    let typeClass = parsedLog.type === 'A' ? 'bg-amber-100 text-amber-700' : (parsedLog.type === 'B' ? 'bg-orange-100 text-orange-700' : 'bg-rose-100 text-rose-700');
+                    
+                    let vals = Object.values(log);
+                    let timeStr = log.time || log.datetime || (vals.length > 4 ? vals[4] : 'N/A');
+                    timeStr = formatLogTime(timeStr); 
+                    
+                    logsList.innerHTML += `
+                        <div class="flex items-start p-3 bg-slate-50/60 rounded-xl border border-slate-100 text-xs">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mr-3 text-xs font-black ${typeClass}">
+                                ${parsedLog.type}
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded text-[9px] uppercase tracking-wide border border-indigo-100">${parsedLog.kpi}</span>
+                                    <span class="text-[9px] text-slate-400 font-bold">${timeStr}</span>
+                                </div>
+                                <p class="font-semibold text-slate-600 text-[13px] mt-1">${parsedLog.desc}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
         }
     }
 
@@ -1348,7 +1597,7 @@
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Bang_Luong_KPI_V3.1_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.csv`);
+        link.setAttribute("download", `Bang_Luong_KPI_V3.2_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
